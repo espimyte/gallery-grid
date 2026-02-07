@@ -91,7 +91,7 @@ class Lightbox {
     }
 
     /** Sets lightbox to current data. */
-    static set({title, desc, tags, img, render, imgWidth, imgHeight}) {
+    static set({title, desc, tags, img, render, noframe, imgWidth, imgHeight}) {
         if (this.disabled) return;
         if (this.isSmallScreen() && !this.smallScreenEnabled) return;
 
@@ -115,11 +115,8 @@ class Lightbox {
         }
 
         this.imgEl.src = img;
-        if (render) {
-            this.imgEl.style.imageRendering = render;
-        } else {
-            this.imgEl.style.imageRendering = undefined;
-        }
+        this.imgEl.style.imageRendering = render ? render : undefined;
+        if (noframe) this.imgEl.classList.add("lb-noframe");
     }
 
     /** Opens the lightbox. */
@@ -212,20 +209,32 @@ class Lightbox {
 
 /* Defines data for single image in the gallery. */
 class GallerySource {
-    constructor({id, img, thumb, title, desc, tags, scale = 1, render, imgWidth, imgHeight, order}) {
-        this.img = img;
-        this.thumb = thumb;
+    constructor(element, {width, height, order}) {
+        let scale = element.getAttribute("scale");
+        if (!scale) scale = 1;
+        scale = parseFloat(scale);
+        if (!scale || scale < 0) {
+            console.warn("Invalid scale value for "+element.getAttribute("src"));
+            scale = 1;
+        }
 
-        this.title = title;
-        this.desc = desc;
-        this.tags = tags;
-        this.scale = scale;
-        this.render = render;
+        let noframe = element.getAttribute("noframe");
+        noframe = noframe === null ? false : noframe !== "false";
 
-        this.imgWidth = imgWidth;
-        this.imgHeight = imgHeight;
+        this.id = element.id;
+        this.img = element.getAttribute("src");
+        this.thumb = element.getAttribute("thumb");
+        this.imgWidth = width;
+        this.imgHeight = height;
 
-        this.id = id;
+        this.title = element.getAttribute("title"); 
+        this.desc = element.getAttribute("desc");
+        this.tags = element.getAttribute("tags")?.split(",");
+        this.scale = scale ?? 1;
+
+        this.render = element.getAttribute("render");
+        this.noframe = noframe;
+
         this.order = order;
     }
 }
@@ -329,7 +338,7 @@ class GalleryHandler {
 
         // Sources
         this.sources = sources;
-        sources.sort((a, b) => a.order > b.order);
+        this.sources.sort((a, b) => a.order > b.order);
 
         // Indexing
         this.curr = -1;
@@ -375,15 +384,7 @@ class GalleryHandler {
     setLightbox(i) {
         const source = this.sources[i];
 
-        Lightbox.openWith({
-            title: source.title, 
-            desc: source.desc, 
-            tags: source.tags,
-            img: source.img,
-            render: source.render,
-            imgWidth: source.imgWidth,
-            imgHeight: source.imgHeight
-        }, source.scale)
+        Lightbox.openWith({...source}, source.scale)
 
         this.focused = true;
 
@@ -650,6 +651,7 @@ class GalleryHandler {
             }
 
             cell.append(cellElements["btn"], cellElements["img"]);
+            if (source.noframe) cell.classList.add("g-noframe");
             cellElements["img"].onload = () => {
                 cellElements["loading"].style.display = "none";
             }
@@ -706,92 +708,119 @@ class GalleryHandler {
 
         /**
          * Adds item (cell) to row.
-         * Returns image.
+         * Returns image, with its extra width and height.
          */
         function addItem(source, index, row) {
             let cell = document.createElement("div");
             cell.className = "g-justifiedGridCell g-gridCell";
 
+            let extraWidth = 0;
+            let extraHeight = 0;
+
             const cellElements = {};
             for (const [key, gen] of Object.entries(GalleryHandler.justifiedCellElementGen)) {
                 const cellElement = gen({self: self, source: source, index: index});
-                cellElements[key] = cellElement
+                cellElements[key] = cellElement;
+
+                if (key === "img") {
+                    const imgOuterSizes = GalleryHandler.getOuterSize(cellElement);
+                    extraWidth += imgOuterSizes.outerWidth;
+                    extraHeight += imgOuterSizes.outerHeight;
+                }
+
                 if (cellElement) cell.appendChild(cellElement);
             }
 
-            let img = cellElements["img"];
+            const cellOuterSizes = GalleryHandler.getOuterSize(cell);
+            extraWidth += cellOuterSizes.outerWidth;
+            extraHeight += cellOuterSizes.outerHeight;
+
+            if (source.noframe) cell.classList.add("g-noframe");
             row.appendChild(cell);
 
-            return img;
+            // Normalized to 100px height --- dh/h * w = dw
+            const normalizedHeight = 100;
+            const normalizedWidth = (100/(source.imgHeight)) * source.imgWidth;
+
+            return {extraWidth, extraHeight, normalizedHeight, normalizedWidth};
         }
   
         /** Adds row to grid */
-        function addRow(endRow = false) {
-            let itemSizesSum = calculateScale()[0];
-            let itemHeight = ((gridWidth) / itemSizesSum);
+        function addRow(rowHeight) {
+            const newRow = currRow;
 
-            row.style.height = `${itemHeight}px`;
-            itemWidthScales = [];
+            newRow.style.width = `${gridWidth}px`
+            newRow.style.height = `${rowHeight}px`;
+            newRow.className = "g-justifiedGridRow";
+            newRow.style.maxHeight = `${maxRowHeight}px`;
+            newRow.style.maxWidth = `${gridWidth * (maxRowHeight / rowHeight)}px`;
 
-            row.style.display = "flex";
-            row.className = endRow ? "g-justifiedGridRow g-justifiedGridEndRow" : "g-justifiedGridRow";
-            row.style.maxHeight = `${maxRowHeight}px`;
-            row.style.maxWidth = `${gridWidth * (maxRowHeight / parseInt(row.style.height))}px`;
-            self.gridEl.appendChild(row);
-            row = document.createElement("div");
+            self.gridEl.appendChild(newRow);
+            rows.push(newRow);
 
-            return itemHeight;
+            currRow = document.createElement("div");
+            return {newRow};
         }
   
-        /**
-         * Calculates row scale.
-         * Lower sums = bigger height
-         * More items increases the sum, and lowers the height.
-         * Returns the sum and whether or not it is of acceptable height.
-         */
-        function calculateScale() {
-            let itemSizesSum = 0;
-            itemWidthScales.forEach((itemSize) => {
-                itemSizesSum += itemSize;
-            });
-
-            let itemHeight = window.innerWidth / itemSizesSum;
-            let acceptable = true;
-            if (itemHeight > maxRowHeight) {
-                acceptable = false;
-            }
-
-            return [itemSizesSum, acceptable];
-        }
-
         // Clears grid
-        self.gridEl.style.minHeight = `${self.gridEl.offsetHeight}px`;
         self.gridEl.textContent = "";
 
         self.gridEl.classList.add("g-grid");
         self.gridEl.classList.add("g-justifiedGrid");
-        var row = document.createElement("div");
-        var itemWidthScales = [];
+        var currRow = document.createElement("div");
+        var imageData = [];
+        var rowHeight = 0;
+
+        var rows = [];
 
         // Iterates through all sources
         let currGridHeight = 0;
         for (let i = 0; i < self.sources.length; i++) {
-            if (calculateScale()[1] == true) {
-            currGridHeight += addRow();
-            }
-
             let source = self.sources[i];
-            let loadedImageData = {width: source.imgWidth, height: source.imgHeight}
+            if (source.imgWidth && source.imgHeight) {
+                const itemResult = addItem(source, i, currRow);
+                imageData.push({src: source, ...itemResult});
 
-            if (loadedImageData.width && loadedImageData.height) {
-                addItem(source, i, row);
-                itemWidthScales.push(loadedImageData.width * (1 / loadedImageData.height));
+                // Calculate new row height --- dw/w * h = dh
+                const desiredWidth = gridWidth - imageData.reduce((sum, data) => sum + data.extraWidth, 0);
+                rowHeight = desiredWidth/imageData.reduce((sum, data) => sum + data.normalizedWidth, 0) * itemResult.normalizedHeight;
+                rowHeight += itemResult.extraHeight;
+
+                if (rowHeight <= maxRowHeight) {
+                    const rowResult = addRow(rowHeight);
+                    currGridHeight += rowResult.itemHeight;
+                    rowHeight = 0;
+                    imageData = [];
+                }
             } else {
                 console.error(`Missing width and height data for ${source.img}`);
             }
         }
-        addRow(true);
-        self.gridEl.style.minHeight = `${currGridHeight}px`;
+        addRow(rowHeight);
+    }
+
+    /* Returns outer sizing of an element (borders, padding, and margin). */
+    static getOuterSize(element) {
+        let outerWidth = 0;
+        let outerHeight = 0;
+
+        // Temporarily add to body to get computed style
+        document.getElementsByTagName("body")[0].appendChild(element);
+
+        // Borders
+        outerWidth += element.offsetWidth - element.clientWidth;
+        outerHeight += element.offsetHeight - element.clientHeight;
+
+        // Margins
+        const computedStyle = window.getComputedStyle(element);
+        outerWidth += parseFloat(computedStyle.marginLeft) + parseFloat(computedStyle.marginRight);
+        outerHeight += parseFloat(computedStyle.marginTop) + parseFloat(computedStyle.marginBottom);
+
+        // Padding
+        outerWidth += parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
+        outerHeight += parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
+
+        return {outerWidth, outerHeight}
     }
 
     /** Updates the lightbox sources and refreshes. */
@@ -830,22 +859,23 @@ class GalleryGrid extends HTMLElement {
                 console.error("Image is missing src URL.")
                 return;
             }
+            child.style.display = "none";
+
+            const cellOrder = child.getAttribute("order") ?? order;
+            order++;
 
             if (this.gridType === "fixed") {
-                sources.push(this.createSource(child, {order: child.getAttribute("order") ?? order}));
+                sources.push(new GallerySource(child, {order: cellOrder}));
                 order++;
             } else {
                 if (child.width && child.height) {
-                    sources.push(this.createSource(child, {width: child.width, height: child.height, order: child.getAttribute("order") ?? order}));
+                    sources.push(new GallerySource(child, {width: child.width, height: child.height, order: cellOrder}));
                     order++;
                 } else {
                     const cellImage = new Image();
-                    const cellOrder = order;
                     cellImage.src = child.getAttribute("thumb") ?? child.getAttribute("src");
                     const loadPromise = new Promise((resolve) => {
-                        cellImage.onload = () => {
-                            resolve(true);
-                        }
+                        cellImage.onload = () => resolve(true);
                         cellImage.onerror = () => {
                             if (child.getAttribute("thumb")) {
                                 console.error("Thumbnail url is invalid.")
@@ -855,7 +885,7 @@ class GalleryGrid extends HTMLElement {
                     })
                     loadPromise.then((success) => {
                         if (success) {
-                            sources.push(this.createSource(child, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: child.getAttribute("order") ?? cellOrder}));
+                            sources.push(new GallerySource(child, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: cellOrder}));
                         }
                     });
                     promises.push(loadPromise);
@@ -864,36 +894,7 @@ class GalleryGrid extends HTMLElement {
             }
         })
 
-        Promise.all(promises).then(() => {
-            this.generateGrid(sources);
-        })
-    }
-
-    createSource(element, {width, height, order}) {
-        let scale = element.getAttribute("scale");
-        if (!scale) scale = 1;
-        scale = parseFloat(scale);
-        if (!scale || scale < 0) {
-            console.warn("Invalid scale value for "+element.getAttribute("src"));
-            scale = 1;
-        }
-
-        const source = {
-            id: element.id,
-            img: element.getAttribute("src"), 
-            thumb: element.getAttribute("thumb"), 
-            imgWidth: width,
-            imgHeight: height,
-
-            title: element.getAttribute("title"), 
-            desc: element.getAttribute("desc"), 
-            tags: element.getAttribute("tags")?.split(","), 
-            scale: scale ?? 1,
-            render: element.getAttribute("render"),
-
-            order: order,
-        }
-        return source;
+        Promise.all(promises).then(() => this.generateGrid(sources))
     }
 
     validateNumber(valueName, defaultValue) {
@@ -943,6 +944,7 @@ class GalleryGrid extends HTMLElement {
 
         // Initialize grid with settings
         const origSources = [...sources]
+        origSources.sort((a, b) => a.order > b.order);
 
         if (maxPerPage) {
             sources = origSources.slice(((this.page - 1) * maxPerPage), (this.page * maxPerPage));
