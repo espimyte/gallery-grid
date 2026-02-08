@@ -437,3 +437,11 @@
         display: none;
     }
 }
+
+/* Gallery sifter */
+.g-sifter {
+    display: flex;
+}
+.g-filters {
+    width: fit-content;
+}
