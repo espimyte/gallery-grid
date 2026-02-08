@@ -11,6 +11,10 @@
     overflow: hidden;
 }
 
+body {
+    overflow-anchor: none;
+}
+
 @keyframes loading {
 	0% {
 		content: ".";
@@ -111,6 +115,7 @@
     margin: 0 auto;
 }
 #lb_image {
+    position: relative;
     z-index: 1;
     object-fit: contain;
     image-rendering: auto;
@@ -245,6 +250,7 @@
     background: rgba(0, 0, 0, 0.5);
     opacity: 0;
     transition: opacity 1s;
+    z-index: 0;
 }
 #lb_loading:before {
     content: "...";
@@ -439,9 +445,44 @@
 }
 
 /* Gallery sifter */
-.g-sifter {
+.g-sifterWrapper {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 5px;
+    font-family: monospace;
+    font-size: 1.1em;
 }
-.g-filters {
-    width: fit-content;
+.g-sifter {
+    accent-color: gray;
+}
+.g-sifter span:not(.g-sifterName) {
+    margin: 0px 5px;
+}
+.g-sifterName {
+    display: inline-block;
+    text-transform: uppercase;
+    color: rgb(184, 184, 184);
+    margin-right: 5px;
+}
+
+.g-filterInputOther:before {
+    content: "N/A"
+}
+
+.g-sort span:not(.g-sifterName) {
+    text-transform: capitalize;
+}
+.g-sortInputAscending:before {
+    content: "ascending";
+}
+.g-sortInputDescending:before {
+    content: "descending";
+}
+.g-sortAlphabetical .g-sortInputAscending:before {
+    content: "A-Z";
+}
+.g-sortAlphabetical .g-sortInputDescending:before {
+    content: "Z-A";
 }
