@@ -154,6 +154,14 @@ body {
     border-width: 1px;
     border-style: solid;
 }
+#lb_desc code {
+    font-size: 0.9em;
+    font-family: monospace;
+    background-color: rgb(24, 20, 59);
+    color: rgb(145, 165, 167);
+    padding: 0px 2px;
+}
+
 @media screen and (max-width: 600px) {
     #lb_container {
         padding: 0;
@@ -259,8 +267,14 @@ body {
 
 /* Gallery grid */
 .g-grid:empty {
+    font-family: monospace;
     border: 1px solid gray;
-    height: 1em;
+    height: 50px;
+}
+.g-grid:empty:before {
+    content: "Nothing here!";
+    margin: auto;
+    padding: 5px;
 }
 .g-gridCell {
     position: relative;
@@ -312,7 +326,7 @@ body {
     position: absolute;
     bottom: 0%;
     right: 0%;
-    margin: 8px 5px;
+    margin: 5px 5px;
     color: white;
     font-size: 0.9rem;
     text-shadow: 1px 1px 0 black, 1px -1px 0 black, -1px -1px 0 black,
@@ -358,6 +372,19 @@ body {
 @media screen and (max-width: 600px) {
     .g-gridCellCaption.g-smallScreen {
         display: block;
+    }
+    .g-fixedGridCell.g-smallFillWidth {
+        width: 100% !important;
+        height: unset !important;
+    }
+    .g-justifiedGridRow.g-smallFillWidth {
+        flex-direction: column;
+        max-height: unset !important;
+        max-width: unset !important;
+        height: unset !important;
+    }
+    .g-justifiedGridRow.g-smallFillWidth .g-gridImage {
+        width: 100%;
     }
 }
 
@@ -454,12 +481,13 @@ body {
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
-    margin: 5px;
+    margin: 10px;
     font-family: monospace;
     font-size: 1.1em;
 }
 .g-sifter {
     accent-color: gray;
+    display: flex;
 }
 .g-sifter span:not(.g-sifterName) {
     margin: 0px 5px;
@@ -469,6 +497,11 @@ body {
     text-transform: uppercase;
     color: rgb(184, 184, 184);
     margin-right: 5px;
+}
+.g-inputsWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
 }
 
 .g-filterInputOther:before {
