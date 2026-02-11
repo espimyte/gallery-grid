@@ -258,6 +258,10 @@ body {
 }
 
 /* Gallery grid */
+.g-grid:empty {
+    border: 1px solid gray;
+    height: 1em;
+}
 .g-gridCell {
     position: relative;
     margin: 5px;
