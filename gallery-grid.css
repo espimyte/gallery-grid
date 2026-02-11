@@ -40,19 +40,23 @@ body {
     overflow: auto;
     border-style: none;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     width: 100%;
     height: 100%;
-    font-family: monospace;
     font-size: 1rem;
+    font-family: "Segoe UI Semilight",Tahoma,sans-serif;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 167, 189, 0.3) 0%,
+        rgba(12, 105, 51, 0.3) 100%
+    );
 }
 #lb a {
-    color: rgb(255, 130, 193);
+    color: rgb(0, 238, 255);
     text-decoration: underline;
 }
 #lb a:hover {
-    color: rgb(255, 252, 206);
+    color: white;
 }
 
 #lb_wrapper {
@@ -89,24 +93,38 @@ body {
 #lb_smallExitButton {
     display: none;
     color: rgb(25, 77, 25);
-    background: none;
     font-size: 20px;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 52, 73, 0.767) 0%,
+        rgba(1, 32, 30, 0.7) 100%
+    );
+    margin: 5px;
+    border: 1px solid rgb(48, 130, 143);
+    border-radius: 10px;
 }
 #lb_exitText {
     margin: 0;
+    color: rgb(191, 214, 88);
 }
 #lb_info {
-    background-color: rgb(0, 0, 0);
-    border-style: double;
     margin: 0 auto;
     color: rgb(179, 226, 203);
-    border-color: rgb(96, 99, 98);
     display: flex;
     flex-direction: column;
     padding: 1em 1em;
     gap: 5px;
     z-index: 1;
     box-sizing: border-box;
+    background: linear-gradient(
+        180deg,
+        rgba(1, 53, 73, 0.7) 0%,
+        rgba(27, 75, 72, 0.7) 80%,
+        rgba(20, 100, 95, 0.7) 100%
+    );
+    border: 1px ridge rgb(37, 207, 170);
+    border-radius: 10px;
+    box-shadow: inset 0px -5px 10px rgb(3, 96, 112);
 }
 #lb_imageWrapper {
     position: relative;
@@ -119,27 +137,35 @@ body {
     z-index: 1;
     object-fit: contain;
     image-rendering: auto;
-    height: fit-content;
-    width: fit-content;
     max-width: 100%;
     max-height: 100%;
     margin: auto;
-    border: 1px solid rgb(75, 75, 75);
     box-sizing: border-box;
+    width: calc(100%);
+    height: calc(100% - 20px);
+    border: 1px solid rgb(48, 130, 143);
+    padding: 5px 5px;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 52, 73, 0.767) 0%,
+        rgba(1, 32, 30, 0.7) 100%
+    );
+    box-shadow: inset 0px 0px 5px rgba(65, 74, 75, 0.8);
 }
 #lb_image.lb-noframe {
     border-color: transparent;
 }
 #lb_desc {
-    color: rgb(177, 177, 177);
     padding: 0;
     margin: 0;
     line-height: 1.3rem;
+    color: rgb(199, 221, 142);
 }
 #lb_title {
     font-weight: bold;
     margin: 0;
     padding: 0;
+    color: rgb(229, 243, 193);
 }
 #lb_tags {
     display: flex;
@@ -149,17 +175,24 @@ body {
 }
 #lb_tags span {
     font-size: 0.85em;
-    color: gray;
     padding: 2px 5px;
     border-width: 1px;
     border-style: solid;
+    color: rgb(147, 230, 224);
+    border-color: rgb(81, 169, 180);
+    background: linear-gradient(
+        180deg,
+        rgb(5, 112, 85) 0%,
+        rgb(9, 61, 104) 100%
+    );
+    font-family: "Segoe UI Semilight",Tahoma,sans-serif;
 }
 #lb_desc code {
     font-size: 0.9em;
     font-family: monospace;
-    background-color: rgb(24, 20, 59);
-    color: rgb(145, 165, 167);
     padding: 0px 2px;
+    background-color: rgb(10, 96, 122);
+    color: #15fff3;
 }
 
 @media screen and (max-width: 600px) {
@@ -170,6 +203,7 @@ body {
     }
     #lb_image {
         margin: 0 auto;
+        padding: 0px;
     }
     #lb_smallExitButton {
         display: block;
@@ -188,28 +222,50 @@ body {
 
 /* Lightbox navigation */
 .lb-nav {
-    color: rgb(132, 161, 131);
-    background: transparent;
     backdrop-filter: brightness(60%);
-    border-color: rgba(116, 113, 121, 0.493);
     min-width: var(--nav-width);
     max-width: var(--nav-width);
-    margin: auto;
-    height: 100%;
     z-index: 1;
     display: none;
     font-size: 20px;
     cursor: pointer;
+    border-radius: 10px;
+    margin: auto 10px;
+    height: 200px;
+    border: 1px solid rgb(0, 113, 121);
+    color: rgb(127, 211, 194);
+    background: linear-gradient(
+        180deg,
+        rgba(1, 53, 73, 0.7) 0%,
+        rgba(27, 75, 72, 0.7) 80%,
+        rgba(20, 100, 95, 0.7) 100%
+    );
+    box-shadow: inset 0px 0px 5px rgba(100, 128, 131, 0.8);
+    max-height: calc(100% - 10px);
 }
 .lb-nav:hover, .lb-nav.lb-pressed {
-    color: rgb(94, 116, 94);
     backdrop-filter: brightness(50%);
     transition: 0.1s;
+    color: rgb(0, 255, 191);
+    border-color: rgb(0, 155, 142);
+    background: linear-gradient(
+        180deg,
+        rgba(0, 95, 133, 0.7) 0%,
+        rgba(48, 134, 129, 0.7) 80%,
+        rgba(32, 163, 154, 0.7) 100%
+    );
 }
 .lb-nav:disabled {
-    color: rgb(43, 43, 43);
-    border-color: rgb(32, 32, 32);
     backdrop-filter: brightness(60%);
+    color: rgb(122, 122, 122);
+    border-color: rgb(100, 100, 100);
+    background: linear-gradient(
+        180deg,
+        rgba(63, 63, 63, 0.6) 0%,
+        rgba(61, 61, 61, 0.6) 80%,
+        rgba(59, 59, 59, 0.6) 100%
+    );
+    box-shadow: inset 0px 0px 5px rgba(61, 61, 61, 0.8);
 }
 #lb_next::before {
     content: "▶";
@@ -222,6 +278,12 @@ body {
         position: absolute;
         border: none;
         backdrop-filter: none;
+
+        height: 100%;
+        margin: 0;
+        border-radius: 0px !important;
+        max-height: unset;
+        box-shadow: none;
     }
     #lb_next {
         top: 0%;
@@ -229,16 +291,16 @@ body {
         background: linear-gradient(
             90deg,
             rgba(0, 0, 0, 0) 0%,
-            rgba(6, 97, 1, 0.3) 100%
+            rgba(40, 255, 244, 0.3) 100%
         );
     }
     #lb_prev {
         top: 0%;
         left: 0%;
         background: linear-gradient(
-            90deg,
-            rgba(6, 97, 1, 0.3) 0%,
-            rgba(0, 0, 0, 0) 100%
+            270deg,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(40, 255, 244, 0.3) 100%
         );
     }
 }
@@ -267,9 +329,10 @@ body {
 
 /* Gallery grid */
 .g-grid:empty {
-    font-family: monospace;
-    border: 1px solid gray;
     height: 50px;
+    font-family: "Segoe UI Semilight",Tahoma,sans-serif;
+    border: 1px solid rgb(0, 136, 118);
+    color: rgb(123, 255, 237);
 }
 .g-grid:empty:before {
     content: "Nothing here!";
@@ -278,14 +341,17 @@ body {
 }
 .g-gridCell {
     position: relative;
-    margin: 5px;
-    border: 1px solid rgb(71, 71, 71);
+    margin: 8px;
+    transition: all 0.5s !important;
+    border: none;
 }
 .g-gridCell.g-noframe {
     border-color: transparent;
 }
 .g-gridImage {
     order: 1;
+    border-radius: 20px;
+    border: 1px solid rgb(0, 255, 136);
 }
 .g-gridButton {
     order: 2;
@@ -304,15 +370,20 @@ body {
     height: 100%;
     top: 0%;
     left: 0%;
-    mix-blend-mode: multiply;
     order: 3;
+    border-radius: 15px;
+    box-shadow: inset 0px 0px 20px rgb(7, 255, 243);
 }
 .g-gridCellEffect, .g-image {
     transition: 0.5s ease !important;
 }
+.g-gridCell:hover {
+    transform: translateY(-5px);
+    transition: all 0s !important;
+}
 .g-gridCell:hover .g-gridCellEffect {
     transition: 0s ease !important;
-    box-shadow: inset 10px 10px 40px rgb(46, 46, 46);
+    box-shadow: inset 0px 0px 20px rgb(7, 255, 243), inset 0px -5px 25px rgb(218, 255, 7);
 }
 .g-disabled img {
     opacity: 1 !important;
@@ -329,10 +400,15 @@ body {
     margin: 5px 5px;
     color: white;
     font-size: 0.9rem;
-    text-shadow: 1px 1px 0 black, 1px -1px 0 black, -1px -1px 0 black,
-    -1px 1px 0 black, -2px 2px 0 black;
-    background-color: rgba(0, 0, 0, 0.61);
-    padding: 5px;
+    font-family: "Segoe UI Semilight",Tahoma,sans-serif;
+    padding: 5px 8px;
+    border-radius: 10px;
+    border: 1px solid rgb(70, 161, 85) ;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 52, 73, 0.9) 0%,
+        rgba(1, 32, 30, 0.9) 100%
+    );
 }
 .g-noframe .g-gridCellCaption {
     margin: 0;
@@ -340,7 +416,7 @@ body {
 .g-gridCellCaption a {
     display: block;
     position: relative;
-    color: rgb(255, 255, 90);
+    color: white;
     text-decoration: underline;
     z-index: 1;
 }
@@ -367,6 +443,12 @@ body {
 .g-gridCellLoading:before {
     content: "...";
     animation: loading 1s linear infinite;
+}
+
+.g-gridCell.g-noframe .g-gridImage, .g-gridCell .g-gridCellEffect {
+    border-color: transparent;
+    box-shadow: none;
+    border-radius: 20px;
 }
 
 @media screen and (max-width: 600px) {
@@ -453,14 +535,36 @@ body {
     align-items: center;
     gap: 5px;
     margin: 10px;
-    font-family: monospace;
+    font-family: "Segoe UI Semilight",Tahoma,sans-serif;
+    color: rgb(0, 230, 218);
 }
 .g-pageNavButton {
     margin: 0;
     cursor: pointer;
+    border-radius: 100%;
+    border: 1px solid green;
+    color: rgb(0, 230, 218);
+    background: linear-gradient(
+        180deg,
+        rgba(0, 156, 177, 0.767) 0%,
+        rgba(0, 44, 41, 0.7) 100%
+    );
 }
 .g-pageNavButton:disabled {
-    color: black;
+    color: rgb(151, 151, 151);
+    border-color: gray;
+    background: linear-gradient(
+        180deg,
+        rgba(167, 167, 167, 0.767) 0%,
+        rgba(36, 36, 36, 0.7) 100%
+    );
+}
+.g-pageNavButton:hover:not(:disabled) {
+    background: linear-gradient(
+        180deg,
+        rgba(0, 156, 177, 0.9) 0%,
+        rgba(0, 44, 41, 0.9) 100%
+    );
 }
 .g-pageNavPrev:before {
     content: "<";
@@ -486,8 +590,11 @@ body {
     font-size: 1.1em;
 }
 .g-sifter {
-    accent-color: gray;
     display: flex;
+    font-family: "Segoe UI Semilight",Tahoma,sans-serif;
+    font-size: 0.9em;
+    color: cyan;
+    accent-color: rgb(33, 216, 161);
 }
 .g-sifter span:not(.g-sifterName) {
     margin: 0px 5px;
@@ -495,8 +602,8 @@ body {
 .g-sifterName {
     display: inline-block;
     text-transform: uppercase;
-    color: rgb(184, 184, 184);
     margin-right: 5px;
+    color: rgb(0, 202, 209);
 }
 .g-inputsWrapper {
     display: flex;
