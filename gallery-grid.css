@@ -329,6 +329,7 @@ body {
 
 /* Gallery grid */
 .g-grid:empty {
+    border: 1px dashed gray;
     height: 50px;
     font-family: "Segoe UI Semilight",Tahoma,sans-serif;
     border: 1px solid rgb(0, 136, 118);
