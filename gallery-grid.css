@@ -268,7 +268,7 @@ body {
 /* Gallery grid */
 .g-grid:empty {
     font-family: monospace;
-    border: 1px solid gray;
+    border: 1px dashed gray;
     height: 50px;
 }
 .g-grid:empty:before {
