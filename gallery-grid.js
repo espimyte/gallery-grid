@@ -12,8 +12,8 @@ const disableShortcuts = false; // Whether or not keyboard shortcuts are enabled
 /* Default values */
 const Defaults = {
     GRID_TYPE: "fixed", // Accepted values: fixed, justified
-    CELL_WIDTH: 300, // Grid cell width (for fixed grids)
-    CELL_HEIGHT: 300, // Grid cell height (for fixed grids)
+    CELL_WIDTH: 250, // Grid cell width (for fixed grids)
+    CELL_HEIGHT: 250, // Grid cell height (for fixed grids)
 
     MAX_ROW_HEIGHT: 500, // Max row height for justified grid
     SMALL_MAX_ROW_HEIGHT: 1000, // Small screen max row height for justified grid
@@ -67,6 +67,7 @@ class Lightbox {
     static img;
     static imgHeight;
     static imgWidth;
+    static imgScale = 1;
 
     // Events
     static lightboxOpenEvent = new Event("lightboxopen");
@@ -90,13 +91,13 @@ class Lightbox {
     }
 
     /** Sets lightbox to given data and opens lightbox. */
-    static openWith(data, imgScale = 1) {
+    static openWith(data) {
         this.set(data);
-        this.open(imgScale);
+        this.open();
     }
 
     /** Sets lightbox to current data. */
-    static set({title, desc, tags, img, render, noframe, imgWidth, imgHeight}) {
+    static set({title, desc, tags, img, render, noframe, imgWidth, imgHeight, imgScale = 1}) {
         if (this.disabled) return;
         if (this.isSmallScreen() && !this.smallScreenEnabled) return;
 
@@ -106,6 +107,7 @@ class Lightbox {
         this.img = img;
         this.imgWidth = imgWidth;
         this.imgHeight = imgHeight;
+        this.imgScale = imgScale;
 
         this.titleEl.innerHTML = title;
         this.descEl.innerHTML = desc;
@@ -126,7 +128,7 @@ class Lightbox {
     }
 
     /** Opens the lightbox. */
-    static open(imgScale = 1) {
+    static open() {
         if (this.disabled) return;
         if (this.isSmallScreen() && !this.smallScreenEnabled) return;
 
@@ -146,30 +148,16 @@ class Lightbox {
             heightBuffer += 120;
         }
 
-        let imageData = this.imgWidth && this.imgHeight ? {width: this.imgWidth, height: this.imgHeight} : undefined;
-
-        if (imgScale != 1 && imageData) {
-            this.imgEl.style.width = `${imageData.width * imgScale}px`;
-            this.imgEl.style.height = `${imageData.height * imgScale}px`;
-        } else {
-            this.imgEl.style.width = "";
-            this.imgEl.style.height = "";
-        }
         this.imgWrapperEl.style.maxHeight = `calc(100% - ${heightBuffer}px)`;
-
-        if (imageData) {
-            this.imgEl.style.aspectRatio = `${imageData.width} / ${imageData.height}`;
-        } else {
-            this.imgEl.style.aspectRatio = "";
-        }
 
         this.loadingEl.style.opacity = "1";
         this.imgEl.onload = () => {
             this.loadingEl.style.opacity = "0";
-            if (imgScale != 1) {
-                this.imgEl.style.width = `${this.imgEl.naturalWidth * imgScale}px`;
-                this.imgEl.style.height = `${this.imgEl.naturalHeight * imgScale}px`;
+            if (this.imgScale != 1) {
+                this.imgEl.style.width = `${this.imgEl.naturalWidth * this.imgScale}px`;
+                this.imgEl.style.height = `${this.imgEl.naturalHeight * this.imgScale}px`;
             }
+            this.imgEl.style.aspectRatio = `${this.imgEl.naturalWidth} / ${this.imgEl.naturalHeight}`;
         }
     }
 
@@ -400,7 +388,7 @@ class GalleryHandler {
     setLightbox(i) {
         const source = this.sources[i];
 
-        Lightbox.openWith({...source, tags: this.hideTags ? undefined : source.tags}, source.scale)
+        Lightbox.openWith({...source, tags: this.hideTags ? undefined : source.tags, imgScale: source.scale})
 
         this.focused = true;
 
@@ -422,7 +410,12 @@ class GalleryHandler {
 
     /** Sets lightbox by id. */
     setLightboxById(id) {
-        this.setLightbox(this.getIndex(id));
+        const index = this.getIndex(id);
+        if (index === -1) {
+            console.warn("Could not find image with id "+id);
+            return;
+        }
+        this.setLightbox(index);
     }
 
     /** Gets index of source by id. */
@@ -616,22 +609,16 @@ class GalleryHandler {
      * @param parent element to add grid to
      * @param width target fixed width for cell
      * @param height target fixed height for cell
-     * @param maxItems that grid can fit
+     * @param smallFillWidth whether or not cells fill the width of a small screen
      */
-    initializeFixedGrid(parent, {width, height, maxItems}) {
+    initializeFixedGrid(parent, {width, height, smallFillWidth}) {
         var self = this;
         this.gridEl = document.createElement("div");
         parent.appendChild(this.gridEl);
 
-        this.generateFixedGrid(width, height, {maxItems: maxItems});
+        this.generateFixedGrid(width, height, {smallFillWidth});
         this.refreshGrid = () => { 
-            self.generateFixedGrid(width, height, {maxItems: maxItems}); 
-        }
-        
-        if (maxItems) {
-            addEventListener("resize", function () {
-                self.refreshGrid();
-            });
+            self.generateFixedGrid(width, height, {smallFillWidth}); 
         }
     }
 
@@ -639,9 +626,9 @@ class GalleryHandler {
      * Generates fixed grid. 
      * @param width target fixed width for cell
      * @param height target fixed height for cell
-     * @param maxItems max items in grid, used for setting a fixed size
+     * @param smallFillWidth whether or not cells fill the width of a small screen
      */
-    generateFixedGrid(width, height, {maxItems}) {
+    generateFixedGrid(width, height, {smallFillWidth}) {
         var self = this;
         this.gridEl.innerHTML = '';
         this.gridEl.classList.add("g-grid");
@@ -654,8 +641,10 @@ class GalleryHandler {
 
             let cell = document.createElement("div");
             cell.className = "g-fixedGridCell g-gridCell";
+            if (smallFillWidth) cell.classList.add("g-smallFillWidth");
             cell.style.width = `${width}px`;
             cell.style.height = `${height}px`;
+            cell.style.aspectRatio = `${width}/${height}`;
 
             const cellElements = {};
             for (const [key, gen] of Object.entries(GalleryHandler.fixedCellElementGen)) {
@@ -675,14 +664,6 @@ class GalleryHandler {
             this.gridEl.appendChild(cell);
             if (!cellRect) cellRect = cell.getBoundingClientRect();
         }
-
-        // Constrain to min height
-        if (maxItems) {
-            const gridWidth = this.gridEl.getBoundingClientRect().width;
-            const itemsPerRow = Math.floor(gridWidth / cellRect.width);
-            const maxRows = Math.ceil(maxItems / itemsPerRow);
-            this.gridEl.style.minHeight = `${cellRect.height*maxRows}px`;
-        }
     }
 
     /** 
@@ -690,8 +671,9 @@ class GalleryHandler {
      * @param parent element to add grid to
      * @param maxRowHeight max height for row
      * @param smallMaxRowHeight max height for row for small screens
+     * @param smallFillWidth whether or not cells fill the width of a small screen
      */
-    initializeJustifiedGrid(parent, {maxRowHeight, smallMaxRowHeight}) {
+    initializeJustifiedGrid(parent, {maxRowHeight, smallMaxRowHeight, smallFillWidth}) {
         var self = this;
         this.gridEl = document.createElement("div");
         parent.appendChild(this.gridEl);
@@ -700,21 +682,22 @@ class GalleryHandler {
 
         self.refreshGrid = () => {};
 
-        self.generateJustifiedGrid(this.maxRowHeight);
+        self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth});
 
         addEventListener("resize", function () {
             self.refreshGrid();
         });
         self.refreshGrid = () => {
-            self.generateJustifiedGrid(this.maxRowHeight);
+            self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth});
         }
     }
 
     /** 
      * Generates with justified grid. 
      * @param maxRowHeight max height for row
+     * @param smallFillWidth whether or not cells fill the width of a small screen
      */
-    generateJustifiedGrid(maxRowHeight) {
+    generateJustifiedGrid(maxRowHeight, {smallFillWidth}) {
         var self = this;
         var gridWidth = self.gridEl.clientWidth;
         
@@ -770,6 +753,7 @@ class GalleryHandler {
             newRow.className = "g-justifiedGridRow";
             newRow.style.maxHeight = `${maxRowHeight}px`;
             newRow.style.maxWidth = `${gridWidth * (maxRowHeight / rowHeight)}px`;
+            if (smallFillWidth) newRow.classList.add("g-smallFillWidth");
 
             self.gridEl.appendChild(newRow);
             rows.push(newRow);
@@ -858,16 +842,23 @@ class GalleryGrid extends HTMLElement {
         "captions", 
         "hidetags", 
         "ascending",
+        "small-fillwidth",
         "small-maxrowheight", 
-        "small-lbdisabled"];
+        "small-lbdisabled",
+        "filters", 
+        "sort"
+    ];
 
     static ids = [];
+    static idCounter = 0;
 
     constructor() {
         super();
+        this.gridInitialized = false;
+        
         this.gridType;
         this.galleryHandler;
-        this.origSources;
+        this.sources = [];
 
         this.page = 1;
         this.maxPerPage;
@@ -880,20 +871,23 @@ class GalleryGrid extends HTMLElement {
         this.includeFilters = [];
         this.sort;
         this.sorting;
+        this.ascending = false;
     }
 
     connectedCallback() {
-        var sources = [];
-        var promises = [];
-        let order = 0;
-
         // Set id (and generate one if none)
         if (!this.id) {
-            let generatedId = this.generateId(3);
-            while (GalleryGrid.ids.includes(generatedId)) {
-                generatedId += this.generateId(1);
+            this.id = GalleryGrid.idCounter.toString();
+            while (GalleryGrid.ids.includes(this.id)) {
+                GalleryGrid.idCounter++;
+                this.id = GalleryGrid.idCounter.toString();
             }
-            this.id = generatedId;
+            GalleryGrid.idCounter++;
+        } else if (this.id && GalleryGrid.ids.includes(this.id)) {
+            while (GalleryGrid.ids.includes(this.id)) {
+                GalleryGrid.idCounter++;
+                this.id += '_' + GalleryGrid.idCounter.toString();
+            }
         }
         GalleryGrid.ids.push(this.id);
 
@@ -906,53 +900,7 @@ class GalleryGrid extends HTMLElement {
             this.gridType = this.validateSelection("gridtype", VALID_GRIDTYPES, Defaults.GRID_TYPE);
         }
 
-        Array.from(this.children).forEach((child) => {
-            if (!child.getAttribute("src")) {
-                console.error("Image is missing src URL.")
-                return;
-            }
-            child.style.display = "none";
-
-            const cellOrder = child.getAttribute("order") ?? order;
-            order++;
-
-            if (this.gridType === "fixed") {
-                sources.push(new GallerySource(child, {order: cellOrder}));
-            } else {
-                if (child.width && child.height) {
-                    sources.push(new GallerySource(child, {width: child.width, height: child.height, order: cellOrder}));
-                } else {
-                    const cellImage = new Image();
-                    cellImage.src = child.getAttribute("thumb") ?? child.getAttribute("src");
-                    const loadPromise = new Promise((resolve) => {
-                        cellImage.onload = () => resolve(true);
-                        cellImage.onerror = () => {
-                            if (child.getAttribute("thumb")) {
-                                console.error("Thumbnail url is invalid.")
-                            } else console.error("Image url is invalid.")
-                            resolve(false);
-                        }
-                    })
-                    loadPromise.then((success) => {
-                        if (success) {
-                            sources.push(new GallerySource(child, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: cellOrder}));
-                        }
-                    });
-                    promises.push(loadPromise);
-                }
-            }
-        })
-
-        Promise.all(promises).then(() => this.initializeGrid(sources))
-    }
-
-    generateId(length) {
-        let result = ''
-        const validChars = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`;
-        for (let i = 0; i < length; i++) {
-            result += validChars.charAt(Math.random() * validChars.length);
-        }
-        return result;
+        this.addAll(this.children)
     }
 
     validateNumber(valueName, defaultValue) {
@@ -987,7 +935,7 @@ class GalleryGrid extends HTMLElement {
         return value === null ? false : value !== "false";
     }
 
-    initializeGrid(sources) {
+    initializeGrid() {
         this.innerHTML = "";
 
         // Generate grid
@@ -997,24 +945,23 @@ class GalleryGrid extends HTMLElement {
         var maxRowHeight = this.validateNumber("maxrowheight", Defaults.MAX_ROW_HEIGHT);
 
         // Small screen attributes
+        var smallFillWidth = this.validateBoolean("small-fillwidth");
         var smallMaxRowHeight = this.validateNumber("small-maxrowheight", this.validateNumber("maxrowheight", Defaults.SMALL_MAX_ROW_HEIGHT));
         var smallLbDisabled = this.validateBoolean("small-lbdisabled");
 
         // Sifter attributes
         this.filters = this.validateSelection("filters", VALID_FILTERS, Defaults.FILTERS);
         this.sort = this.validateSelection("sort", VALID_SORTS, Defaults.SORT)
-        var ascending;
         if (this.getAttribute("ascending") === null && this.sort == "alphabetical") {
-            ascending = true;
-        } else ascending = this.validateBoolean("ascending");
+            this.ascending = true;
+        } else this.ascending = this.validateBoolean("ascending");
 
         // Other attributes
         var captions = this.validateSelection("captions", VALID_CAPTIONS, Defaults.CAPTIONS);
         var hideTags = this.validateBoolean("hidetags");
 
-        // Initialize grid with settings
-        this.origSources = [...sources]
-        this.origSources.sort((a, b) => a.order > b.order);
+        // Sort sources
+        this.sources.sort((a, b) => a.order > b.order);
 
         // Create sorts and filters options (if applicable)
         const sifterDiv = document.createElement("div");
@@ -1027,7 +974,7 @@ class GalleryGrid extends HTMLElement {
 
             if (this.filters === "tags") {
                 let hasUntaggedSources = false;
-                this.origSources.forEach((source) => {
+                this.sources.forEach((source) => {
                     if (source.tags) {
                         source.tags.forEach((tag) => {
                             if (!filterList.includes(tag)) filterList.push(tag);
@@ -1041,6 +988,9 @@ class GalleryGrid extends HTMLElement {
             const filterWrapper = document.createElement("div");
             filterWrapper.className = 'g-filters g-sifter';
             filterWrapper.innerHTML = `<span class='g-sifterName'>Filters</span>`;
+            const inputs = document.createElement("div");
+            inputs.className = "g-inputsWrapper";
+            filterWrapper.appendChild(inputs);
 
             filterList.forEach((filter) => {
                 const filterInput = document.createElement("input");
@@ -1053,8 +1003,12 @@ class GalleryGrid extends HTMLElement {
                 filterName.className = filter ? '' : 'g-filterInputOther';
                 filterName.textContent = filter ?? '';
 
-                filterWrapper.appendChild(filterInput);
-                filterWrapper.appendChild(filterName);
+                const inputWrapper = document.createElement("div");
+                inputWrapper.className = 'g-input';
+
+                inputWrapper.appendChild(filterInput);
+                inputWrapper.appendChild(filterName);
+                inputs.appendChild(inputWrapper);
 
                 this.includeFilters.push(filter);
 
@@ -1071,7 +1025,7 @@ class GalleryGrid extends HTMLElement {
 
         // Sorts
         if (this.sort !== "none") {
-            this.sorting = ascending ? "ascending" : "descending";
+            this.sorting = this.ascending ? "ascending" : "descending";
 
             const sortWrapper = document.createElement("div");
             sortWrapper.className = 'g-sort g-sifter';
@@ -1086,7 +1040,7 @@ class GalleryGrid extends HTMLElement {
                 sortInput.className = `g-sortInput`;
                 sortInput.name = `${this.id}_sort`;
                 sortInput.type = 'radio';
-                sortInput.checked = ascending ? i == 0 : i == 1;
+                sortInput.checked = this.ascending ? i == 0 : i == 1;
 
                 const sortName = document.createElement('span');
                 sortName.className = `g-sortInput${sortOption.charAt(0).toUpperCase() + sortOption.substring(1)}`;
@@ -1109,20 +1063,21 @@ class GalleryGrid extends HTMLElement {
         this.appendChild(sifterDiv);
 
         // Create grid
-        this.galleryHandler = new GalleryHandler(sources, {smallLightboxEnabled: !smallLbDisabled, captions, hideTags});
+        this.galleryHandler = new GalleryHandler(this.sources, {smallLightboxEnabled: !smallLbDisabled, captions, hideTags});
 
         if (this.gridType == "fixed") {
             this.galleryHandler.initializeFixedGrid(this, {
                 width: width, 
-                height: height
+                height: height,
+                smallFillWidth
             })
         } else if (this.gridType == "justified") {
-            this.galleryHandler.initializeJustifiedGrid(this, {smallMaxRowHeight: smallMaxRowHeight, maxRowHeight: maxRowHeight})
+            this.galleryHandler.initializeJustifiedGrid(this, {smallMaxRowHeight, maxRowHeight, smallFillWidth})
         }
 
         // Create page nav (if applicable)
         if (this.maxPerPage) {
-            const pageCount = Math.max(Math.floor(this.origSources.length / this.maxPerPage) + ((this.origSources.length % this.maxPerPage) !== 0 ? 1 : 0), 1)
+            const pageCount = Math.max(Math.floor(this.sources.length / this.maxPerPage) + ((this.sources.length % this.maxPerPage) !== 0 ? 1 : 0), 1)
             this.pageNav = document.createElement("div");
             this.pageNav.className = "g-pageNav";
 
@@ -1148,15 +1103,16 @@ class GalleryGrid extends HTMLElement {
             this.appendChild(this.pageNav);
         }
 
+        this.gridInitialized = true;
         this.applySourceChanges();
     }
 
     applySourceChanges() {
-        var changedSources = [...this.origSources];
+        var changedSources = [...this.sources];
 
         // Apply filters
         if (this.filters !== "none" && this.includeFilters) {
-            changedSources = this.origSources.filter((source) => {
+            changedSources = this.sources.filter((source) => {
                 let include = false;
                 source.tags?.forEach((tag) => {
                     if (this.includeFilters.includes(tag)) include = true;
@@ -1169,6 +1125,9 @@ class GalleryGrid extends HTMLElement {
         }
 
         // Apply sorts
+        if (this.sort == "none" && this.ascending ) {
+            changedSources = changedSources.reverse();
+        }
         if (this.sort && this.sort == "default") {
             if (this.sorting === "ascending") {
                 changedSources = changedSources.reverse();
@@ -1200,6 +1159,68 @@ class GalleryGrid extends HTMLElement {
         }
     }
 
+    addAll(imgEls) {
+        var promises = [];
+        let order = 0;
+
+        Array.from(imgEls).forEach((child) => {
+            if (child.tagName.toLowerCase() !== "img") console.warn("Non-image element in gallery grid ");
+            const res = this.add(child, order);
+            if (res) promises.push(res);
+            order++;
+        });
+
+        if (!this.gridInitialized) Promise.all(promises).then(() => this.initializeGrid())
+        else this.applySourceChanges();
+    }
+
+    add(imgEl, order = 0) {
+        if (!imgEl.getAttribute("src")) {
+            console.error("Image is missing src URL.")
+            return;
+        }
+        imgEl.style.display = "none";
+
+        const cellOrder = imgEl.getAttribute("order") ?? order;
+
+        if (this.gridType === "fixed") {
+            this.sources.push(new GallerySource(imgEl, {order: cellOrder}));
+            if (this.gridInitialized) this.applySourceChanges();
+        } else {
+            if (imgEl.width && imgEl.height) {
+                this.sources.push(new GallerySource(imgEl, {width: imgEl.width, height: imgEl.height, order: cellOrder}));
+                if (this.gridInitialized) this.applySourceChanges();
+            } else {
+                const cellImage = new Image();
+                cellImage.src = imgEl.getAttribute("thumb") ?? imgEl.getAttribute("src");
+                const loadPromise = new Promise((resolve) => {
+                    cellImage.onload = () => resolve(true);
+                    cellImage.onerror = () => {
+                        if (imgEl.getAttribute("thumb")) {
+                            console.error("Thumbnail url is invalid.")
+                        } else console.error("Image url is invalid.")
+                        resolve(false);
+                    }
+                })
+                loadPromise.then((success) => {
+                    if (success) {
+                        this.sources.push(new GallerySource(imgEl, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: cellOrder}));
+                        if (this.gridInitialized) this.applySourceChanges();
+                    }
+                });
+                return loadPromise;
+            }
+        }
+    }
+
+    clear() {
+        if (!this.gridInitialized) {
+            console.warn("Cannot clear grid before initialization");
+            return;
+        }
+        this.sources = [];
+        this.applySourceChanges();
+    }
 }
 customElements.define('gallery-grid', GalleryGrid);
 
