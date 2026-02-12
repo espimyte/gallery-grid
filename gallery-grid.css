@@ -474,6 +474,12 @@ body {
 
     font-size: 0.9rem;
     border: 1px solid var(--terminal-green);
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-height: 100%;
+    max-width: 100%;
 }
 .g-noframe .g-gridCellCaption {
     margin: 0;
