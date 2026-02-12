@@ -16,7 +16,6 @@
 
     #lb_exitButton - the button used to exit the lightbox, usually the entire background
     #lb_smallExitButton - the button used to exit the lightbox on small screens, usually an 'x' in the corner of the lightbox
-    #lb_exitText - the text inside of the small exit button
 
     #lb_imageWrapper - wrapper for image and loading graphic/text
     #lb_image - the image viewed in the lightbox
@@ -171,11 +170,24 @@ body {
 }
 #lb_smallExitButton {
     display: none;
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    z-index: 1000;
+
+    height: 50px;
+    width: 50px;
+    margin-left: auto;
+
     color: rgb(25, 77, 25);
+    background-color: rgb(142, 175, 141);
+    border-style: outset;
+    border-color: rgb(116, 113, 121);
+
     font-size: 20px;
 }
-#lb_exitText {
-    margin: 0;
+#lb_smallExitButton:before {
+    content: "X";
 }
 
 /* Lightbox image */
@@ -264,16 +276,6 @@ body {
     }
     #lb_smallExitButton {
         display: block;
-        position: absolute;
-        top: 0%;
-        right: 0%;
-        background-color: rgb(142, 175, 141);
-        height: 50px;
-        width: 50px;
-        margin-left: auto;
-        border-style: outset;
-        border-color: rgb(116, 113, 121);
-        z-index: 1000;
     }
 }
 
