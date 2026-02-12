@@ -1252,7 +1252,7 @@ function main() {
             <button class="lb-nav" id="lb_prev"></button>
             <div id="lb_container">
                 <button id="lb_exitButton"></button>
-                <button id="lb_smallExitButton"><p id="lb_exitText">X</p></button>
+                <button id="lb_smallExitButton"></button>
                 <div id="lb_imageWrapper">
                     <img id="lb_image" />  
                     <div id="lb_loading"></div>
