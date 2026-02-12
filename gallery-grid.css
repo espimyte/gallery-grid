@@ -6,6 +6,7 @@
 
 :root {
     --nav-width: 40px;
+    --border-image: url('pink-border.png')
 }
 :root:has(.lb-open) {
     overflow: hidden;
@@ -156,7 +157,7 @@ body {
     margin: auto;
     box-sizing: border-box;
     border: 18px solid transparent;
-    border-image: url('spring.png') 18 round;
+    border-image: var(--border-image) 18 round;
 }
 #lb_image.lb-noframe {
     border: 0px solid transparent;
@@ -349,7 +350,7 @@ body {
     position: relative;
     margin: 5px;
     border: 18px solid transparent;
-    border-image: url('spring.png') 18 round;
+    border-image: var(--border-image) 18 round;
     image-rendering: pixelated;
     box-sizing: border-box;
     transition: transform 0.5s, filter 0.5s !important;
