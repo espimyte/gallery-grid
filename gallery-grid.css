@@ -513,6 +513,12 @@ body {
         rgba(0, 52, 73, 0.9) 0%,
         rgba(1, 32, 30, 0.9) 100%
     );
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-height: 100%;
+    max-width: 100%;
 }
 .g-noframe .g-gridCellCaption {
     margin: 0;
