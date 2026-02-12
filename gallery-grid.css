@@ -524,6 +524,8 @@ body {
 }
 .g-gridCellCaption code {
     font-size: 0.9em;
+    background-color: rgb(10, 96, 122);
+    color: #15fff3;
 }
 .g-gridCellCaption.g-smallScreen {
     display: none;
@@ -550,7 +552,7 @@ body {
     animation: loading 1s linear infinite;
 }
 
-.g-gridCell.g-noframe .g-gridImage, .g-gridCell .g-gridCellEffect {
+.g-gridCell.g-noframe .g-gridCellImage, .g-gridCell .g-gridCellEffect {
     border-color: transparent;
     box-shadow: none;
     border-radius: 20px;
@@ -622,7 +624,6 @@ body {
     background: transparent;
     padding: 0px;
     margin: 0px;
-    border: 0px;
     width: 100%;
     height: 100%;
     object-fit: cover;
