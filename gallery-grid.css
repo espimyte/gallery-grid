@@ -472,7 +472,7 @@ body {
     transition: transform 0s !important;
     filter: drop-shadow(0px 0px 10px rgb(255, 175, 244)) drop-shadow(5px 5px 0px rgba(109, 15, 96, 0.5));
 }
-.g-gridCell:hover .g-gridImage {
+.g-gridCell:hover .g-gridCellImage {
     filter: sepia(100%) saturate(312%) hue-rotate(287deg) brightness(100%) contrast(100%);
 }
 .g-gridCell.g-noframe {
