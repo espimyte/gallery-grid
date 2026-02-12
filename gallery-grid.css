@@ -40,28 +40,33 @@ body {
     overflow: auto;
     border-style: none;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     width: 100%;
     height: 100%;
     font-family: monospace;
     font-size: 1rem;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 157, 76, 0.3) 0%,
+        rgba(255, 164, 220, 0.3) 100%
+    );
 }
 #lb a {
-    color: rgb(255, 130, 193);
+    color: rgb(240, 255, 156);
     text-decoration: underline;
 }
 #lb a:hover {
-    color: rgb(255, 252, 206);
+    color: white;
 }
 
 #lb_wrapper {
     position: fixed;
     overflow: auto;
     display: flex;
-    width: 100%;
     height: 100dvh;
     overflow: hidden;
+    padding: 0px 5px;
+    width: calc(100% - 10px);
 }
 #lb_container {
     margin: auto;
@@ -88,25 +93,50 @@ body {
 }
 #lb_smallExitButton {
     display: none;
-    color: rgb(25, 77, 25);
-    background: none;
     font-size: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 185, 128, 0.5) 0%,
+        rgba(255, 164, 220, 0.5) 100%
+    );
+    color: pink;
+    border-radius: 100%;
+    margin: 5px;
 }
 #lb_exitText {
     margin: 0;
 }
 #lb_info {
-    background-color: rgb(0, 0, 0);
-    border-style: double;
-    margin: 0 auto;
-    color: rgb(179, 226, 203);
-    border-color: rgb(96, 99, 98);
     display: flex;
     flex-direction: column;
-    padding: 1em 1em;
     gap: 5px;
     z-index: 1;
     box-sizing: border-box;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: white;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 185, 128, 0.8) 0%,
+        rgba(255, 164, 220, 0.8) 100%
+    );
+    border: 1px dashed white;
+    padding: 0px 16px;
+    margin: 8px auto;
+}
+#lb_info:before {
+    content: "❁✿❀❁✿❀";
+    transform: translateY(-12px);
+    text-align: center;
+    height: 10px;
+    letter-spacing: 10%;
+}
+#lb_info:after {
+    content: "❁✿❀❁✿❀";
+    transform: translateY(-2px);
+    text-align: center;
+    height: 10px;
+    letter-spacing: 4px;
 }
 #lb_imageWrapper {
     position: relative;
@@ -124,22 +154,26 @@ body {
     max-width: 100%;
     max-height: 100%;
     margin: auto;
-    border: 1px solid rgb(75, 75, 75);
     box-sizing: border-box;
+    border: 18px solid transparent;
+    border-image: url('spring.png') 18 round;
 }
 #lb_image.lb-noframe {
-    border-color: transparent;
+    border: 0px solid transparent;
+    border-image: unset;
 }
 #lb_desc {
-    color: rgb(177, 177, 177);
     padding: 0;
     margin: 0;
     line-height: 1.3rem;
+    color: white;
+    letter-spacing: 1px;
 }
 #lb_title {
     font-weight: bold;
     margin: 0;
     padding: 0;
+    letter-spacing: 1px;
 }
 #lb_tags {
     display: flex;
@@ -149,16 +183,22 @@ body {
 }
 #lb_tags span {
     font-size: 0.85em;
-    color: gray;
-    padding: 2px 5px;
     border-width: 1px;
     border-style: solid;
+    font-family: serif;
+    letter-spacing: 1px;
+    text-transform: lowercase;
+    color: rgb(255, 253, 223);
+    border-color: rgba(255, 251, 193, 0.4);
+    background: rgba(245, 174, 187, 0.8);
+    border-radius: 6px;
+    padding: 2px 8px;
 }
 #lb_desc code {
     font-size: 0.9em;
     font-family: monospace;
-    background-color: rgb(24, 20, 59);
-    color: rgb(145, 165, 167);
+    background-color: rgba(198, 56, 169, 0.43);
+    color: #ffff15;
     padding: 0px 2px;
 }
 
@@ -188,40 +228,68 @@ body {
 
 /* Lightbox navigation */
 .lb-nav {
-    color: rgb(132, 161, 131);
-    background: transparent;
     backdrop-filter: brightness(60%);
-    border-color: rgba(116, 113, 121, 0.493);
     min-width: var(--nav-width);
     max-width: var(--nav-width);
-    margin: auto;
-    height: 100%;
     z-index: 1;
     display: none;
-    font-size: 20px;
     cursor: pointer;
+    color: rgb(255, 228, 154);
+    font-size: 2em;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    margin: auto 5px;
+    max-height: calc(100% - 10px);
+    height: 300px;
+    border: 1px dashed rgba(255, 255, 255, 0.5);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 185, 128, 0.5) 0%,
+        rgba(255, 164, 220, 0.5) 100%
+    );
 }
 .lb-nav:hover, .lb-nav.lb-pressed {
-    color: rgb(94, 116, 94);
     backdrop-filter: brightness(50%);
     transition: 0.1s;
+    color: white;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 185, 128, 0.7) 0%,
+        rgba(255, 164, 220, 0.7) 100%
+    );
+    border-style: solid;
 }
 .lb-nav:disabled {
-    color: rgb(43, 43, 43);
-    border-color: rgb(32, 32, 32);
     backdrop-filter: brightness(60%);
+    background: rgba(0, 0, 0, 0.486);
+    color: rgba(255, 192, 203, 0.6);
+    border-color: rgba(255, 192, 203, 0.6);
+    border-style: solid;
 }
-#lb_next::before {
-    content: "▶";
+#lb_prev {
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
 }
-#lb_prev::before {
-    content: "◀";
+#lb_next {
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+#lb_prev:before {
+    content: '✽⊰✽';
+}
+#lb_next:before {
+    content: '✽⊱✽';
 }
 @media screen and (max-width: 600px) {
     .lb-nav {
         position: absolute;
         border: none;
         backdrop-filter: none;
+        height: 100%;
+        margin: 0;
+        border-radius: 0px !important;
+        max-height: unset;
+        color: pink;
     }
     #lb_next {
         top: 0%;
@@ -229,16 +297,16 @@ body {
         background: linear-gradient(
             90deg,
             rgba(0, 0, 0, 0) 0%,
-            rgba(6, 97, 1, 0.3) 100%
+            rgba(255, 202, 228, 0.5) 100%
         );
     }
     #lb_prev {
         top: 0%;
         left: 0%;
         background: linear-gradient(
-            90deg,
-            rgba(6, 97, 1, 0.3) 0%,
-            rgba(0, 0, 0, 0) 100%
+            270deg,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(255, 202, 228, 0.5) 100%
         );
     }
 }
@@ -267,9 +335,10 @@ body {
 
 /* Gallery grid */
 .g-grid:empty {
-    font-family: monospace;
-    border: 1px dashed gray;
     height: 50px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    border: 1px solid pink;
+    color: rgb(255, 231, 235);
 }
 .g-grid:empty:before {
     content: "Nothing here!";
@@ -279,10 +348,26 @@ body {
 .g-gridCell {
     position: relative;
     margin: 5px;
-    border: 1px solid rgb(71, 71, 71);
+    border: 18px solid transparent;
+    border-image: url('spring.png') 18 round;
+    image-rendering: pixelated;
+    box-sizing: border-box;
+    transition: transform 0.5s, filter 0.5s !important;
+    filter: drop-shadow(5px 5px 0px rgba(109, 15, 96, 0.5));
+}
+.g-gridCell > * {
+    image-rendering: auto;
+}
+.g-gridCell:hover {
+    transform: rotateZ(3deg);
+    transition: transform 0s !important;
+    filter: drop-shadow(0px 0px 10px rgb(255, 175, 244)) drop-shadow(5px 5px 0px rgba(109, 15, 96, 0.5));
+}
+.g-gridCell:hover .g-gridImage {
+    filter: sepia(100%) saturate(312%) hue-rotate(287deg) brightness(100%) contrast(100%);
 }
 .g-gridCell.g-noframe {
-    border-color: transparent;
+    border: none;
 }
 .g-gridImage {
     order: 1;
@@ -292,8 +377,10 @@ body {
     position: absolute;
     padding: 0;
     margin: 0;
-    width: 100%;
-    height: 100%;
+    z-index: 1;
+    width: calc(100% + 36px);
+    height: calc(100% + 36px);
+    transform: translate(-18px, -18px);
 }
 .g-gridButton:hover {
     cursor: pointer;
@@ -306,6 +393,7 @@ body {
     left: 0%;
     mix-blend-mode: multiply;
     order: 3;
+    display: none;
 }
 .g-gridCellEffect, .g-image {
     transition: 0.5s ease !important;
@@ -326,13 +414,20 @@ body {
     position: absolute;
     bottom: 0%;
     right: 0%;
-    margin: 5px 5px;
     color: white;
-    font-size: 0.9rem;
-    text-shadow: 1px 1px 0 black, 1px -1px 0 black, -1px -1px 0 black,
-    -1px 1px 0 black, -2px 2px 0 black;
-    background-color: rgba(0, 0, 0, 0.61);
-    padding: 5px;
+    z-index: 1;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.8em;
+    margin: 2px;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 179, 116, 0.8) 0%,
+        rgba(255, 175, 224, 0.8) 100%
+    );
+    border-radius: 10px;
+    padding: 5px 10px;
+    letter-spacing: 0.5px;
+    text-shadow: 0px 0px 1px rgb(255, 245, 188);
 }
 .g-noframe .g-gridCellCaption {
     margin: 0;
@@ -340,9 +435,12 @@ body {
 .g-gridCellCaption a {
     display: block;
     position: relative;
-    color: rgb(255, 255, 90);
+    color: rgb(240, 255, 156);
     text-decoration: underline;
     z-index: 1;
+}
+.g-gridCellCaption a:hover {
+    color: white;
 }
 .g-gridCellCaption.g-smallScreen {
     display: none;
@@ -411,6 +509,12 @@ body {
 .g-justifiedGridImage {
     height: 100%;
 }
+.g-justifiedGridRow > :first-child {
+    margin-left: 0px;
+}
+.g-justifiedGridRow > :last-child {
+    margin-right: 0px;
+}
 @media screen and (max-width: 600px) {
     .g-justifiedGridRow {
         max-height: none;
@@ -454,13 +558,33 @@ body {
     gap: 5px;
     margin: 10px;
     font-family: monospace;
+    color: rgb(242, 255, 172);
 }
 .g-pageNavButton {
     margin: 0;
     cursor: pointer;
+    background: linear-gradient(
+        180deg,
+        rgb(255, 202, 161) 0%,
+        rgb(255, 177, 226) 100%
+    );
+    border-radius: 40%;
+    padding: 2px 5px;
+    border-style: none;
+    color: rgb(255, 255, 255);;
+    box-shadow: 2px 2px 0px rgba(109, 15, 96, 0.5);
 }
 .g-pageNavButton:disabled {
-    color: black;
+    background: rgba(128, 128, 128, 0.5);
+    color: rgba(255, 255, 255, 0.5);
+}
+.g-pageNavButton:hover:not(:disabled) {
+    color: rgb(255, 154, 201);
+    background: linear-gradient(
+        180deg,
+        rgb(255, 238, 225) 0%,
+        rgb(255, 228, 245) 100%
+    );
 }
 .g-pageNavPrev:before {
     content: "<";
@@ -486,8 +610,12 @@ body {
     font-size: 1.1em;
 }
 .g-sifter {
-    accent-color: gray;
     display: flex;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.8em;
+    letter-spacing: 1px;
+    color: rgb(255, 192, 239);
+    accent-color: rgb(255, 192, 239);;
 }
 .g-sifter span:not(.g-sifterName) {
     margin: 0px 5px;
@@ -495,7 +623,7 @@ body {
 .g-sifterName {
     display: inline-block;
     text-transform: uppercase;
-    color: rgb(184, 184, 184);
+    color: rgb(236, 197, 111);
     margin-right: 5px;
 }
 .g-inputsWrapper {
