@@ -4,14 +4,89 @@
 *   Author: espimyte (https://espy.world)
 */
 
+/* 
+    You don't need to customize every aspect of this to make your own theme! 
+    This is just a dictionary of every class/id to provide as many possible options.
+
+    --- Lightbox ---
+
+    #lb - container for entire lightbox (image viewer)
+    #lb_wrapper - wrapper for all lightbox contents, including navigation
+    #lb_container - container for all lightbox contents
+
+    #lb_exitButton - the button used to exit the lightbox, usually the entire background
+    #lb_smallExitButton - the button used to exit the lightbox on small screens, usually an 'x' in the corner of the lightbox
+
+    #lb_imageWrapper - wrapper for image and loading graphic/text
+    #lb_image - the image viewed in the lightbox
+    .lb-noframe - class for images where the 'noframe' attribute is active
+
+    #lb_info - container for all info on the image
+    #lb_desc - lightbox image description
+    #lb_title - lightbox image title
+    #lb_tags - lightbox image tags
+    
+    .lb-nav - lightbox navigation button
+    #lb_prev - lightbox previous navigation button
+    #lb_next - lightbox next navigation button
+
+    #lb_loading - lightbox image loading element
+
+
+    --- Gallery Grid ---
+
+    .g-grid - element containing a gallery grid
+    .g-fixedGrid - element containing a fixed gallery grid
+    .g-justifiedGrid - element containing a justified gallery grid
+    .g-justifiedGridRow - element for a row in a justified gallery grid
+    
+    .g-gridCell - a cell in the gallery grid
+    .g-gridCellImage - the image in a grid cell
+    .g-gridCellButton - the button in the grid cell that opens the lightbox (takes up the entire cell)
+    .g-gridCellEffect - a helper element in the grid cell used for effects (ex. hover effects)
+    .g-gridCellCaption - image caption in grid cell (only visible when 'captions' are enabled)
+    .g-gridCellLoading - loading element in grid cell (does not appear for justified grids)
+
+    .g-noframe - class for grid cells where the 'noframe' attribute is active
+    .g-disabled - class for when accessing the lightbox is disabled in the grid
+    .g-smallScreen - class for elements that are only visible on small screens
+    .g-smallScreenHide - class for elements that are not visible on small screens
+    .g-smallFillWidth - class that tells grid cell to fill the width of the screen on small screens when enabled
+
+    .g-pageNav - container for page navigation
+    .g-pageNavButton - navigation button for pages
+    .g-pageNavNum - current page and total page count text
+    .g-pageNavPrev - previous navigation button for pages
+    .g-pageNavNext - next navigation button for pages
+
+    .g-sifterWrapper - container for both filters and sorts
+    .g-sifter - container for either filters/sorts
+    .g-sifterName - name of sifter (either 'Filters' or 'Sort)
+
+    .g-inputs - inputs for sifter
+    .g-inputWrapper - wrapper for sifter input
+
+    .g-filters - container for filter related elements
+    .g-filterInput - input for filter (checkbox input)
+    .g-filterInputOther - input for filter option for untagged images
+
+    .g-sort - container for sort related elements
+    .g-sortInput - input for sort (radio input)
+    .g-sortInputAscending - ascending sort input
+    .g-sortInputDescending - descending sort input
+    .g-sortAlphabetical - class for when alphabetical sort is selected
+
+*/
+
 :root {
     --nav-width: 40px;
+    --link-color: greenyellow;
+    --link-hover-color: white;
     --terminal-green: rgb(0, 219, 0);
 }
 :root:has(.lb-open) {
     overflow: hidden;
 }
-
 body {
     overflow-anchor: none;
 }
@@ -35,83 +110,86 @@ body {
 #lb {
     display: none;
     position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    overflow: auto;
-    border-style: none;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.5);
+
+    top: 0;
+    left: 0;
+    z-index: 9999;
+
     width: 100%;
     height: 100%;
+
+    border-style: none;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+
     font-family: monospace;
     font-size: 1rem;
     backdrop-filter: invert(61%) sepia(58%) saturate(5118%) hue-rotate(86deg) brightness(45%) contrast(200%) blur(5px);
 }
 #lb a {
-    color: greenyellow;
-    text-decoration: underline;
+    color: var(--link-color);
 }
 #lb a:hover {
-    color: white;
+    color: var(--link-hover-color);
 }
-
 #lb_wrapper {
     position: fixed;
-    overflow: auto;
     display: flex;
+    overflow: hidden;
+
     width: 100%;
     height: 100dvh;
-    overflow: hidden;
 }
 #lb_container {
-    margin: auto;
     display: flex;
     flex-grow: 1;
     flex-direction: column;
     justify-content: center;
-    height: calc(100dvh - 40px);
     gap: 10px;
+    
+    margin: auto;
     padding: 20px;
+    height: calc(100dvh - 40px);
 }
+
+/* Lightbox exit buttons */
 #lb_exitButton {
     position: absolute;
     top: 0%;
     left: 0%;
+    z-index: 0;
+
+    cursor: auto !important;
+
     border-style: none;
     border-radius: 0%;
     background-color: transparent;
-    z-index: 0;
+
     padding: 0;
-    cursor: auto !important;
     height: 100dvh;
     width: 100%;
 }
 #lb_smallExitButton {
     display: none;
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    z-index: 1000;
+
+    height: 50px;
+    width: 50px;
+
     font-size: 20px;
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--terminal-green);
     color: var(--terminal-green);
 }
+#lb_smallExitButton:before {
+    content: "X";
+}
 
-#lb_exitText {
-    margin: 0;
-}
-#lb_info {
-    background-color: rgb(0, 0, 0);
-    border-style: double;
-    margin: 0 auto;
-    color: rgb(179, 226, 203);
-    border-color: rgb(96, 99, 98);
-    display: flex;
-    flex-direction: column;
-    padding: 1em 1em;
-    gap: 5px;
-    z-index: 1;
-    box-sizing: border-box;
-    border: 1px solid var(--terminal-green);
-}
+/* Lightbox image */
 #lb_imageWrapper {
     position: relative;
     width: fit-content;
@@ -121,27 +199,54 @@ body {
 #lb_image {
     position: relative;
     z-index: 1;
+
     object-fit: contain;
     image-rendering: auto;
+
+    height: calc(100% - 8px);
     width: fit-content;
     max-width: 100%;
     max-height: 100%;
     margin: auto;
+    padding: 4px;
+
     box-sizing: border-box;
     border: 1px solid var(--terminal-green);
-    padding: 4px;
     background: black;
-    height: calc(100% - 8px);
 }
 #lb_image.lb-noframe {
     border-color: transparent;
     background: transparent;
     filter: drop-shadow(1px 1px 0px green) drop-shadow(-1px -1px 0px green) drop-shadow(1px -1px 0px green) drop-shadow(-1px 1px 0px green) 
 }
+
+/* Lightbox info box */
+#lb_info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 1;
+
+    color: rgb(179, 226, 203);
+    background-color: rgb(0, 0, 0);
+    margin: 0 auto;
+    padding: 1em 1em;
+
+    border: 1px solid var(--terminal-green);
+    box-sizing: border-box;
+}
 #lb_desc {
     padding: 0;
     margin: 0;
     line-height: 1.3rem;
+}
+#lb_desc code {
+    font-size: 0.9em;
+    font-family: monospace;
+    padding: 0px 2px;
+    background-color: black;
+    color: var(--terminal-green);
+    box-shadow: inset 1px 1px 0px green, inset -1px -1px 0px green;
 }
 #lb_title {
     font-weight: bold;
@@ -153,8 +258,8 @@ body {
 }
 #lb_tags {
     display: flex;
-    font-family: monospace;
     gap: 5px;
+    font-family: monospace;
     margin-bottom: 5px;
 }
 #lb_tags span {
@@ -169,14 +274,6 @@ body {
 #lb_tags span:after {
     content: "]"
 }
-#lb_desc code {
-    font-size: 0.9em;
-    font-family: monospace;
-    padding: 0px 2px;
-    background-color: black;
-    color: var(--terminal-green);
-    box-shadow: inset 1px 1px 0px green, inset -1px -1px 0px green;
-}
 
 @media screen and (max-width: 600px) {
     #lb_container {
@@ -190,33 +287,26 @@ body {
     }
     #lb_smallExitButton {
         display: block;
-        position: absolute;
-        top: 0%;
-        right: 0%;
-        background-color: rgb(142, 175, 141);
-        height: 50px;
-        width: 50px;
-        margin-left: auto;
-        border-style: outset;
-        border-color: rgb(116, 113, 121);
-        z-index: 1000;
     }
 }
 
 /* Lightbox navigation */
 .lb-nav {
+    display: none;
+    z-index: 1;
+    cursor: pointer;
+
+    color: var(--terminal-green);
     background: transparent;
     backdrop-filter: brightness(60%);
+    border: 1px solid var(--terminal-green);
+
     min-width: var(--nav-width);
     max-width: var(--nav-width);
     margin: auto;
     height: 100%;
-    z-index: 1;
-    display: none;
+
     font-size: 20px;
-    cursor: pointer;
-    border: 1px solid var(--terminal-green);
-    color: var(--terminal-green);
 }
 .lb-nav:hover, .lb-nav.lb-pressed {
     backdrop-filter: brightness(50%);
@@ -267,17 +357,21 @@ body {
     position: absolute;
     top: 0%;
     left: 0%;
-    width: 100%;
-    height: 100%;
-    border: 1px solid gray;
-    box-sizing: border-box;
+    z-index: 0;
+
+    opacity: 0;
+    transition: opacity 1s;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     background: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    transition: opacity 1s;
-    z-index: 0;
+    width: 100%;
+    height: 100%;
+
+    border: 1px solid gray;
+    box-sizing: border-box;
 }
 #lb_loading:before {
     content: "...";
@@ -296,6 +390,14 @@ body {
     margin: auto;
     padding: 5px;
 }
+.g-grid a {
+    color: var(--link-color);
+}
+.g-grid a:hover {
+    color: var(--link-hover-color);
+}
+
+/* Gallery grid cell */
 .g-gridCell {
     position: relative;
     margin: 8px;
@@ -311,7 +413,7 @@ body {
 .g-gridCell.g-noframe .g-gridImage {
     filter: drop-shadow(1px 1px 0px green) drop-shadow(-1px -1px 0px green) drop-shadow(1px -1px 0px green) drop-shadow(-1px 1px 0px green);
 }
-.g-gridImage {
+.g-gridCellImage {
     order: 1;
     border: 2px solid var(--terminal-green);
     box-sizing: border-box;
@@ -319,7 +421,7 @@ body {
 .g-gridCell.g-noframe:hover .g-gridImage {
     filter: unset;
 }
-.g-gridButton {
+.g-gridCellButton {
     order: 2;
     position: absolute;
     padding: 0;
@@ -327,7 +429,7 @@ body {
     width: 100%;
     height: 100%;
 }
-.g-gridButton:hover {
+.g-gridCellButton:hover {
     cursor: pointer;
 }
 .g-gridCellEffect {
@@ -359,52 +461,46 @@ body {
 .g-disabled button {
     display: none;
 }
-
 .g-gridCellCaption {
     display: block;
     position: absolute;
     bottom: 0%;
     right: 0%;
-    font-size: 0.9rem;
-    padding: 5px;
     z-index: 1;
+
     margin: 6px;
-    color: var(--terminal-green);
+    padding: 5px;
     background: black;
+    color: var(--terminal-green);
+
+    font-size: 0.9rem;
     border: 1px solid var(--terminal-green);
 }
 .g-noframe .g-gridCellCaption {
     margin: 0;
 }
-.g-gridCellCaption a {
-    display: block;
-    position: relative;
-    color: greenyellow;
-    text-decoration: underline;
-    z-index: 1;
-}
-.g-gridCellCaption a:hover {
-    color: white;
+.g-gridCellCaption code {
+    font-size: 0.9em;
 }
 .g-gridCellCaption.g-smallScreen {
     display: none;
 }
 
-.g-justifiedGrid .g-gridCellLoading {
-    display: none;
-}
 .g-gridCellLoading {
     position: absolute;
+    top: 0%;
+    left: 0%;
+    z-index: -1;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 0%;
-    left: 0%;
+
     border: 1px solid gray;
     box-sizing: border-box;
+
     width: 100%;
     height: 100%;
-    z-index: -1;
 }
 .g-gridCellLoading:before {
     content: "...";
@@ -415,7 +511,7 @@ body {
     .g-gridCellCaption.g-smallScreen {
         display: block;
     }
-    .g-fixedGridCell.g-smallFillWidth {
+    .g-fixedGrid .g-gridCell.g-smallFillWidth {
         width: 100% !important;
         height: unset !important;
     }
@@ -425,7 +521,7 @@ body {
         max-width: unset !important;
         height: unset !important;
     }
-    .g-justifiedGridRow.g-smallFillWidth .g-gridImage {
+    .g-justifiedGridRow.g-smallFillWidth .g-gridCellImage {
         width: 100%;
     }
 }
@@ -440,19 +536,23 @@ body {
 .g-justifiedGridRow {
     display: flex;
 }
-.g-justifiedGridCell {
+.g-justifiedGrid .g-gridCell {
     position: relative;
 }
-.g-justifiedGridButton {
+.g-justifiedGrid .g-gridCellButton {
     background: transparent;
     border-style: none;
     z-index: 1;
     top: 0%;
     left: 0%;
 }
-.g-justifiedGridImage {
+.g-justifiedGrid .g-gridCellImage {
     height: 100%;
 }
+.g-justifiedGrid .g-gridCellLoading {
+    display: none;
+}
+
 @media screen and (max-width: 600px) {
     .g-justifiedGridRow {
         max-height: none;
@@ -466,10 +566,10 @@ body {
     justify-content: center;
     gap: 0em;
 }
-.g-fixedGridCell {
+.g-fixedGrid .g-gridCell {
     display: inline;
 }
-.g-fixedGridImage {
+.g-fixedGrid .g-gridCellImage {
     background: transparent;
     padding: 0px;
     margin: 0px;
@@ -480,7 +580,7 @@ body {
     image-rendering: auto;
     vertical-align: middle;
 }
-.g-fixedGridButton {
+.g-fixedGrid .g-gridCellButton {
     display: inline;
     background: transparent;
     box-sizing: content-box;
@@ -539,6 +639,7 @@ body {
     display: flex;
     color: var(--terminal-green);
     accent-color: var(--terminal-green);
+    align-items: center;
 }
 .g-sifter span:not(.g-sifterName) {
     margin: 0px 5px;
@@ -549,16 +650,18 @@ body {
     color: rgb(0, 173, 0);
     margin-right: 5px;
 }
-.g-inputsWrapper {
+.g-inputs {
     display: flex;
     flex-wrap: wrap;
     gap: 2px;
 }
 
+/* Filters */
 .g-filterInputOther:before {
     content: "N/A"
 }
 
+/* Sorts */
 .g-sort span:not(.g-sifterName) {
     text-transform: capitalize;
 }

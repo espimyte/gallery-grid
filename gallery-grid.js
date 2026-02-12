@@ -156,6 +156,9 @@ class Lightbox {
             if (this.imgScale != 1) {
                 this.imgEl.style.width = `${this.imgEl.naturalWidth * this.imgScale}px`;
                 this.imgEl.style.height = `${this.imgEl.naturalHeight * this.imgScale}px`;
+            } else {
+                this.imgEl.style.width = ``;
+                this.imgEl.style.height = ``;
             }
             this.imgEl.style.aspectRatio = `${this.imgEl.naturalWidth} / ${this.imgEl.naturalHeight}`;
         }
@@ -249,20 +252,20 @@ class GalleryHandler {
         loading: ({}) => {
             // Loading
             let loading = document.createElement("div");
-            loading.className = "g-fixedGridCellLoading g-gridCellLoading";
+            loading.className = "g-gridCellLoading";
             return loading;
         },
         effect: ({self}) => {
             // Effect
             let effect = document.createElement("div");
-            effect.className = "g-fixedGridCellEffect g-gridCellEffect";
+            effect.className = "g-gridCellEffect";
             if (!self.smallLightboxEnabled) effect.classList.add("g-smallScreenHide");
             return effect;
         },
         btn: ({self, index}) => {
             // Button to open lightbox
             let btn = document.createElement("button");
-            btn.className = "g-fixedGridButton g-gridButton";
+            btn.className = "g-gridCellButton";
             if (!self.smallLightboxEnabled)  btn.classList.add("g-smallScreenHide");
             btn.onclick = () => {
                 self.setLightbox(index);
@@ -273,7 +276,7 @@ class GalleryHandler {
             // Image
             let img = document.createElement("img");
             img.src = self.getCellImage(source);
-            img.className = "g-fixedGridImage g-gridImage";
+            img.className = "g-gridCellImage";
             if (source.thumbRender) img.style.imageRendering = source.thumbRender
             else if (source.render) img.style.imageRendering = source.render;
             return img;
@@ -295,7 +298,7 @@ class GalleryHandler {
         effect: ({self}) => {
             // Effect
             let effect = document.createElement("div");
-            effect.className = "g-justifiedGridCellEffect g-gridCellEffect rm-pause";
+            effect.className = "g-gridCellEffect rm-pause";
             if (!self.smallLightboxEnabled) effect.classList.add("g-smallScreenHide");
             return effect;
         },
@@ -303,7 +306,7 @@ class GalleryHandler {
             // Image
             let img = document.createElement("img");
             img.src = self.getCellImage(source);
-            img.className = "g-justifiedGridImage g-gridImage";
+            img.className = "g-gridCellImage";
             if (source.thumbRender) img.style.imageRendering = source.thumbRender
             else if (source.render) img.style.imageRendering = source.render;
             return img;
@@ -311,7 +314,7 @@ class GalleryHandler {
         btn: ({self, index}) => {
             // Button to open lightbox
             let btn = document.createElement("button");
-            btn.className = "g-justifiedGridButton g-gridButton";
+            btn.className = "g-gridCellButton";
             if (!self.smallLightboxEnabled) btn.classList.add("g-smallScreenHide");
             btn.onclick = function () {
                 self.setLightbox(index);
@@ -640,7 +643,7 @@ class GalleryHandler {
             let source = this.sources[i];
 
             let cell = document.createElement("div");
-            cell.className = "g-fixedGridCell g-gridCell";
+            cell.className = "g-gridCell";
             if (smallFillWidth) cell.classList.add("g-smallFillWidth");
             cell.style.width = `${width}px`;
             cell.style.height = `${height}px`;
@@ -711,7 +714,7 @@ class GalleryHandler {
          */
         function addItem(source, index, row) {
             let cell = document.createElement("div");
-            cell.className = "g-justifiedGridCell g-gridCell";
+            cell.className = "g-gridCell";
 
             let extraWidth = 0;
             let extraHeight = 0;
@@ -989,7 +992,7 @@ class GalleryGrid extends HTMLElement {
             filterWrapper.className = 'g-filters g-sifter';
             filterWrapper.innerHTML = `<span class='g-sifterName'>Filters</span>`;
             const inputs = document.createElement("div");
-            inputs.className = "g-inputsWrapper";
+            inputs.className = "g-inputs";
             filterWrapper.appendChild(inputs);
 
             filterList.forEach((filter) => {
@@ -1004,7 +1007,7 @@ class GalleryGrid extends HTMLElement {
                 filterName.textContent = filter ?? '';
 
                 const inputWrapper = document.createElement("div");
-                inputWrapper.className = 'g-input';
+                inputWrapper.className = 'g-inputWrapper';
 
                 inputWrapper.appendChild(filterInput);
                 inputWrapper.appendChild(filterName);
@@ -1031,6 +1034,9 @@ class GalleryGrid extends HTMLElement {
             sortWrapper.className = 'g-sort g-sifter';
             if (this.sort === "alphabetical") sortWrapper.classList.add('g-sortAlphabetical');
             sortWrapper.innerHTML = `<span class='g-sifterName'>Sort</span>`;
+            const inputs = document.createElement("div");
+            inputs.className = "g-inputs";
+            sortWrapper.appendChild(inputs);
 
             const sortOptions = ["ascending", "descending"]
 
@@ -1053,8 +1059,11 @@ class GalleryGrid extends HTMLElement {
                     }
                 }
 
-                sortWrapper.appendChild(sortInput);
-                sortWrapper.appendChild(sortName)
+                const inputWrapper = document.createElement("div");
+                inputWrapper.className = 'g-inputWrapper';
+                inputWrapper.appendChild(sortInput);
+                inputWrapper.appendChild(sortName);
+                inputs.appendChild(inputWrapper);
             });
 
             sifterDiv.appendChild(sortWrapper);
@@ -1090,6 +1099,7 @@ class GalleryGrid extends HTMLElement {
             }
 
             this.pageNavNum = document.createElement("span");
+            this.pageNavNum.className = 'g-pageNavNum';
             this.pageNav.appendChild(this.pageNavNum);
 
             this.pageNextButton = document.createElement("button");
@@ -1242,7 +1252,7 @@ function main() {
             <button class="lb-nav" id="lb_prev"></button>
             <div id="lb_container">
                 <button id="lb_exitButton"></button>
-                <button id="lb_smallExitButton"><p id="lb_exitText">X</p></button>
+                <button id="lb_smallExitButton"></button>
                 <div id="lb_imageWrapper">
                     <img id="lb_image" />  
                     <div id="lb_loading"></div>
