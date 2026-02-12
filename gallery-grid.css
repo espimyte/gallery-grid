@@ -440,6 +440,12 @@ body {
     font-size: 0.9rem;
     text-shadow: 1px 1px 0 black, 1px -1px 0 black, -1px -1px 0 black,
     -1px 1px 0 black, -2px 2px 0 black;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-height: 100%;
+    max-width: 100%;
 }
 .g-noframe .g-gridCellCaption {
     margin: 0;
