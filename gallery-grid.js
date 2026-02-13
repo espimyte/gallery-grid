@@ -156,6 +156,9 @@ class Lightbox {
             if (this.imgScale != 1) {
                 this.imgEl.style.width = `${this.imgEl.naturalWidth * this.imgScale}px`;
                 this.imgEl.style.height = `${this.imgEl.naturalHeight * this.imgScale}px`;
+            } else {
+                this.imgEl.style.width = '';
+                this.imgEl.style.height = '';
             }
             this.imgEl.style.aspectRatio = `${this.imgEl.naturalWidth} / ${this.imgEl.naturalHeight}`;
         }
