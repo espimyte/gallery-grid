@@ -161,6 +161,11 @@ class Lightbox {
                 this.imgEl.style.height = ``;
             }
             this.imgEl.style.aspectRatio = `${this.imgEl.naturalWidth} / ${this.imgEl.naturalHeight}`;
+            if (this.imgEl.naturalHeight > this.imgEl.naturalWidth) {
+                this.imgEl.style.height = 'fit-content';
+            } else {
+                this.imgEl.style.width = 'fit-content';
+            }
         }
     }
 
@@ -315,6 +320,7 @@ class GalleryHandler {
             img.style.display = '';
             img.src = GalleryHandler.getCellImage(source);
             img.className = "g-gridCellImage";
+
             if (source.thumbRender) img.style.imageRendering = source.thumbRender
             else if (source.render) img.style.imageRendering = source.render;
             return img;
@@ -527,6 +533,7 @@ class GalleryHandler {
             init.y = e.touches[0].pageY;
         });
         addEventListener("touchmove", function(e) {
+            if (!self.focused) return;
             delta.x = e.touches[0].pageX - init.x;
             delta.y = e.touches[0].pageY - init.y;
 
@@ -746,6 +753,8 @@ class GalleryHandler {
             extraHeight += cellOuterSizes.outerHeight;
 
             if (source.noframe) cell.classList.add("g-noframe");
+            cell.style.aspectRatio = `${source.imgWidth}/${source.imgHeight}`;
+            cell.style.height = `calc(100% - ${extraHeight}px)`;
             row.appendChild(cell);
 
             // Normalized to 100px height --- dh/h * w = dw
@@ -760,17 +769,17 @@ class GalleryHandler {
             const newRow = currRow;
 
             newRow.style.width = `${gridWidth}px`
-            newRow.style.height = `${rowHeight}px`;
+            newRow.style.height = `${Math.min(rowHeight, maxRowHeight)}px`;
             newRow.className = "g-justifiedGridRow";
             newRow.style.maxHeight = `${maxRowHeight}px`;
-            newRow.style.maxWidth = `${gridWidth * (maxRowHeight / rowHeight)}px`;
+            newRow.style.maxWidth = `${Math.min(gridWidth, gridWidth * (maxRowHeight / rowHeight))}px`;
             if (smallFillWidth) newRow.classList.add("g-smallFillWidth");
 
             self.gridEl.appendChild(newRow);
             rows.push(newRow);
 
             currRow = document.createElement("div");
-            return {newRow};
+            return newRow;
         }
   
         // Clears grid
@@ -786,6 +795,8 @@ class GalleryHandler {
 
         // Iterates through all sources
         let currGridHeight = 0;
+        self.sources.sort((a, b) => a.order > b.order);
+
         for (let i = 0; i < self.sources.length; i++) {
             let source = self.sources[i];
             if (source.imgWidth && source.imgHeight) {
@@ -799,6 +810,11 @@ class GalleryHandler {
 
                 if (rowHeight <= maxRowHeight) {
                     const rowResult = addRow(rowHeight);
+
+                    Array.from(rowResult.children).forEach((child) => {
+                        child.style.height = `calc(100% - ${itemResult.extraHeight}px)`
+                    });
+
                     currGridHeight += rowResult.itemHeight;
                     rowHeight = 0;
                     imageData = [];
@@ -1205,7 +1221,7 @@ class GalleryGrid extends HTMLElement {
                             if (this.gridInitialized) this.applySourceChanges();
                         })
                     })
-                } else {
+                }else {
                     this.initializeGrid();
                 }
             } else {
