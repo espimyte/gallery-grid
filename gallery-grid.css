@@ -625,6 +625,7 @@ body {
 .g-justifiedGrid .g-gridCell {
     position: relative;
     max-height: 100%;
+    box-sizing: content-box;
 }
 .g-justifiedGrid .g-gridCellButton {
     background: transparent;
@@ -635,12 +636,6 @@ body {
 }
 .g-justifiedGrid .g-gridCellImage {
     max-height: 100%;
-}
-.g-justifiedGridRow > :first-child {
-    margin-left: 0px;
-}
-.g-justifiedGridRow > :last-child {
-    margin-right: 0px;
 }
 .g-justifiedGrid .g-gridCellLoading {
     display: none;
