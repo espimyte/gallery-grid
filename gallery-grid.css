@@ -47,6 +47,7 @@
     .g-gridCellCaption - image caption in grid cell (only visible when 'captions' are enabled)
     .g-gridCellLoading - loading element in grid cell (does not appear for justified grids)
 
+    .g-loading - text that appears while a grid is loading (justified grids only)
     .g-noframe - class for grid cells where the 'noframe' attribute is active
     .g-disabled - class for when accessing the lightbox is disabled in the grid
     .g-smallScreen - class for elements that are only visible on small screens
@@ -395,6 +396,13 @@ body {
 .g-grid a:hover {
     color: var(--link-hover-color);
 }
+.g-loading {
+    text-align: center;
+}
+.g-loading:after {
+    content: "...";
+    animation: loading 1s linear infinite;
+}
 
 /* Gallery grid cell */
 .g-gridCell {
@@ -564,6 +572,9 @@ body {
 }
 .g-justifiedGrid .g-gridCellLoading {
     display: none;
+}
+.g-justifiedGrid.g-gridLoading:before {
+    content: "Loading...";
 }
 
 @media screen and (max-width: 600px) {
