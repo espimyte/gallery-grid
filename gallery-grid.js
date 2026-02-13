@@ -1189,8 +1189,29 @@ class GalleryGrid extends HTMLElement {
             order++;
         });
 
-        if (!this.gridInitialized) Promise.all(promises).then(() => this.initializeGrid())
-        else this.applySourceChanges();
+        if (!this.gridInitialized) {
+            if (this.gridType === "justified") {
+                const loadingText = document.createElement('p');
+                loadingText.className = 'g-loading';
+                loadingText.textContent = 'Loading';
+                this.appendChild(loadingText);
+
+                if (promises.length > 0) {
+                    Promise.any(promises).then(() => {
+                        if (!this.gridInitialized) this.initializeGrid();
+                    });
+                    promises.forEach((promise) => {
+                        promise.then(() => {
+                            if (this.gridInitialized) this.applySourceChanges();
+                        })
+                    })
+                } else {
+                    this.initializeGrid();
+                }
+            } else {
+                this.initializeGrid();
+            }
+        } else this.applySourceChanges();
     }
 
     add(imgEl, order = 0, refresh = true) {
