@@ -211,7 +211,7 @@ class Lightbox {
 
 /* Defines data for single image in the gallery. */
 class GallerySource {
-    constructor({id, img, thumb, imgWidth, imgHeight, title, desc, tags, render, thumbRender, scale, noframe, order}) {
+    constructor({id, img, thumb, imgWidth, imgHeight, title, desc, tags, render, thumbRender, scale, noframe, order, element}) {
         this.id = id;
         this.img = img;
         this.thumb = thumb;
@@ -228,6 +228,8 @@ class GallerySource {
         this.thumbRender = thumbRender;
         this.noframe = noframe;
         this.order = order;
+
+        this.element = element;
     }
 
     static fromElement(element, {width, height, order}) {
@@ -242,7 +244,7 @@ class GallerySource {
         let noframe = element.getAttribute("noframe");
         noframe = noframe === null ? false : noframe !== "false";
 
-        return new GallerySource({id: element.id, img: element.getAttribute("src"), thumb: element.getAttribute("thumb"), imgWidth: width, imgHeight: height, title: element.getAttribute("title"), desc: element.getAttribute("desc"), tags: element.getAttribute("tags")?.split(","), scale, noframe, order, render: element.getAttribute("render"), thumbRender: element.getAttribute("thumb-render")})
+        return new GallerySource({element, id: element.id, img: element.getAttribute("src"), thumb: element.getAttribute("thumb"), imgWidth: width, imgHeight: height, title: element.getAttribute("title"), desc: element.getAttribute("desc"), tags: element.getAttribute("tags")?.split(","), scale, noframe, order, render: element.getAttribute("render"), thumbRender: element.getAttribute("thumb-render")})
     }
 }
 
@@ -278,7 +280,8 @@ class GalleryHandler {
         },
         img: ({source}) => {
             // Image
-            let img = document.createElement("img");
+            let img = source.element ?? document.createElement("img");
+            img.style.display = '';
             img.src = GalleryHandler.getCellImage(source);
             img.className = "g-gridCellImage";
             if (source.thumbRender) img.style.imageRendering = source.thumbRender
@@ -308,7 +311,8 @@ class GalleryHandler {
         },
         img: ({source}) => {
             // Image
-            let img = document.createElement("img");
+            let img = source.element ?? document.createElement("img");
+            img.style.display = '';
             img.src = GalleryHandler.getCellImage(source);
             img.className = "g-gridCellImage";
             if (source.thumbRender) img.style.imageRendering = source.thumbRender
@@ -1179,7 +1183,7 @@ class GalleryGrid extends HTMLElement {
 
         Array.from(imgEls).forEach((child) => {
             if (child.tagName.toLowerCase() !== "img") console.warn("Non-image element in gallery grid ");
-            const res = this.add(child, order);
+            const res = this.add(child, order, false);
             if (res) promises.push(res);
             order++;
         });
@@ -1188,7 +1192,7 @@ class GalleryGrid extends HTMLElement {
         else this.applySourceChanges();
     }
 
-    add(imgEl, order = 0) {
+    add(imgEl, order = 0, refresh = true) {
         if (!imgEl.getAttribute("src")) {
             console.error("Image is missing src URL.")
             return;
@@ -1196,14 +1200,15 @@ class GalleryGrid extends HTMLElement {
         imgEl.style.display = "none";
 
         const cellOrder = imgEl.getAttribute("order") ?? order;
+        const doRefresh = this.gridInitialized && refresh;
 
         if (this.gridType === "fixed") {
             this.sources.push(GallerySource.fromElement(imgEl, {order: cellOrder}));
-            if (this.gridInitialized) this.applySourceChanges();
+            if (doRefresh) this.applySourceChanges();
         } else {
             if (imgEl.width && imgEl.height) {
                 this.sources.push(GallerySource.fromElement(imgEl, {width: imgEl.width, height: imgEl.height, order: cellOrder}));
-                if (this.gridInitialized) this.applySourceChanges();
+                if (doRefresh) this.applySourceChanges();
             } else {
                 const cellImage = new Image();
                 cellImage.src = imgEl.getAttribute("thumb") ?? imgEl.getAttribute("src");
@@ -1219,7 +1224,7 @@ class GalleryGrid extends HTMLElement {
                 loadPromise.then((success) => {
                     if (success) {
                         this.sources.push(GallerySource.fromElement(imgEl, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: cellOrder}));
-                        if (this.gridInitialized) this.applySourceChanges();
+                        if (doRefresh) this.applySourceChanges();
                     }
                 });
                 return loadPromise;
