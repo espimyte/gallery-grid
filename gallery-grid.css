@@ -125,7 +125,7 @@ body {
 
     font-family: monospace;
     font-size: 1rem;
-    backdrop-filter: invert(61%) sepia(58%) saturate(5118%) hue-rotate(86deg) brightness(45%) contrast(200%) blur(5px);
+    backdrop-filter: invert(61%) sepia(58%) hue-rotate(86deg) brightness(45%) contrast(200%) blur(5px);
 }
 #lb a {
     color: var(--link-color);
