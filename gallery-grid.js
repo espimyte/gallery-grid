@@ -157,15 +157,10 @@ class Lightbox {
                 this.imgEl.style.width = `${this.imgEl.naturalWidth * this.imgScale}px`;
                 this.imgEl.style.height = `${this.imgEl.naturalHeight * this.imgScale}px`;
             } else {
-                this.imgEl.style.width = ``;
-                this.imgEl.style.height = ``;
+                this.imgEl.style.width = '';
+                this.imgEl.style.height = '';
             }
             this.imgEl.style.aspectRatio = `${this.imgEl.naturalWidth} / ${this.imgEl.naturalHeight}`;
-            if (this.imgEl.naturalHeight > this.imgEl.naturalWidth) {
-                this.imgEl.style.height = 'fit-content';
-            } else {
-                this.imgEl.style.width = 'fit-content';
-            }
         }
     }
 
@@ -661,7 +656,6 @@ class GalleryHandler {
             cell.className = "g-gridCell";
             if (smallFillWidth) cell.classList.add("g-smallFillWidth");
             cell.style.width = `${width}px`;
-            cell.style.height = `${height}px`;
             cell.style.aspectRatio = `${width}/${height}`;
 
             const cellElements = {};
@@ -754,7 +748,6 @@ class GalleryHandler {
 
             if (source.noframe) cell.classList.add("g-noframe");
             cell.style.aspectRatio = `${source.imgWidth}/${source.imgHeight}`;
-            cell.style.height = `calc(100% - ${extraHeight}px)`;
             row.appendChild(cell);
 
             // Normalized to 100px height --- dh/h * w = dw
@@ -823,7 +816,13 @@ class GalleryHandler {
                 console.error(`Missing width and height data for ${source.img}`);
             }
         }
-        if (self.sources.length > 0) addRow(rowHeight);
+        if (self.sources.length > 0) {
+            const rowResult = addRow(rowHeight);
+
+            Array.from(rowResult.children).forEach((child) => {
+                child.style.height = `calc(100% - ${imageData[0].extraHeight}px)`
+            });
+        }
     }
 
     /* Returns outer sizing of an element (borders, padding, and margin). */
