@@ -354,7 +354,6 @@ class GalleryHandler {
         // Sources
         this.sources = sources;
         this.sources.sort((a, b) => {
-            if (!a.order || !b.order) return true;
             return a.order > b.order
         });
 
@@ -791,10 +790,6 @@ class GalleryHandler {
 
         // Iterates through all sources
         let currGridHeight = 0;
-        this.sources.sort((a, b) => {
-            if (!a.order || !b.order) return true;
-            return a.order > b.order
-        });
 
         for (let i = 0; i < self.sources.length; i++) {
             let source = self.sources[i];
@@ -858,6 +853,9 @@ class GalleryHandler {
     /** Updates the lightbox sources and refreshes. */
     updateSources(sources = this.sources) {
         this.sources = sources;
+        this.sources.sort((a, b) => {
+            return a.order > b.order
+        });
         GalleryHandler.onSourcesChanged(this, sources);
     }
 }
@@ -991,12 +989,6 @@ class GalleryGrid extends HTMLElement {
         // Other attributes
         var captions = this.validateSelection("captions", VALID_CAPTIONS, Defaults.CAPTIONS);
         var hideTags = this.validateBoolean("hidetags");
-
-        // Sort sources
-        this.sources.sort((a, b) => {
-            if (!a.order || !b.order) return true;
-            return a.order > b.order
-        });
 
         // Create sorts and filters options (if applicable)
         const sifterDiv = document.createElement("div");
