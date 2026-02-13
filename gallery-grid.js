@@ -1205,7 +1205,7 @@ class GalleryGrid extends HTMLElement {
                             if (this.gridInitialized) this.applySourceChanges();
                         })
                     })
-                }else {
+                } else {
                     this.initializeGrid();
                 }
             } else {
