@@ -644,3 +644,44 @@ body {
 .g-sortAlphabetical .g-sortInputDescending:before {
     content: "Z-A";
 }
+
+/* --- Modifications below this line --- */
+#lb, #lb_desc {
+    font-family: 'Consolas';
+}
+#lb_title {
+    font-family: 'Exo 2';
+}
+#lb_exitText {
+    font-family: 'Silkscreen';
+}
+.lb-nav {
+    font-family: "Bodoni Ornaments ITC";
+}
+#lb_prev::before {
+    content: "Z";
+}
+#lb_next::before {
+    content: "Y";
+}
+.g-gridCellPlay {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.g-gridCellPlay img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 100px;
+    width: 100px;
+    filter: invert(100%);
+    mix-blend-mode: difference;
+}
+html:not(.reduced-motion) .g-gridCellPlay {
+    display: none;
+}
