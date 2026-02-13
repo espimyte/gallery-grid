@@ -524,7 +524,7 @@ body {
     margin: 0;
 }
 .g-gridCellCaption a {
-    display: block;
+    display: inline-block;
     position: relative;
     z-index: 1;
 }
