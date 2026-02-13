@@ -192,8 +192,9 @@ body {
 /* Lightbox image */
 #lb_imageWrapper {
     position: relative;
-    width: 100%;
+    width: fit-content;
     height: fit-content;
+    margin: 0 auto;
     display: flex;
 }
 #lb_image {
@@ -411,6 +412,7 @@ body {
     border: 1px solid var(--terminal-green);
     background: rgb(0, 0, 0);
     box-sizing: content-box;
+    display: flex;
 }
 .g-gridCell.g-noframe {
     background: transparent;
