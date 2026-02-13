@@ -201,8 +201,9 @@ body {
 /* Lightbox image */
 #lb_imageWrapper {
     position: relative;
-    width: 100%;
+    width: fit-content;
     height: fit-content;
+    margin: 0 auto;
     display: flex;
 }
 #lb_image {
@@ -457,6 +458,7 @@ body {
     position: relative;
     margin: 8px;
     transition: all 0.5s !important;
+    display: flex;
 }
 .g-gridCellImage {
     order: 1;
