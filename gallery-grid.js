@@ -353,7 +353,10 @@ class GalleryHandler {
 
         // Sources
         this.sources = sources;
-        this.sources.sort((a, b) => a.order > b.order);
+        this.sources.sort((a, b) => {
+            if (!a.order || !b.order) return true;
+            return a.order > b.order
+        });
 
         // Indexing
         this.curr = -1;
@@ -788,7 +791,10 @@ class GalleryHandler {
 
         // Iterates through all sources
         let currGridHeight = 0;
-        self.sources.sort((a, b) => a.order > b.order);
+        this.sources.sort((a, b) => {
+            if (!a.order || !b.order) return true;
+            return a.order > b.order
+        });
 
         for (let i = 0; i < self.sources.length; i++) {
             let source = self.sources[i];
@@ -987,7 +993,10 @@ class GalleryGrid extends HTMLElement {
         var hideTags = this.validateBoolean("hidetags");
 
         // Sort sources
-        this.sources.sort((a, b) => a.order > b.order);
+        this.sources.sort((a, b) => {
+            if (!a.order || !b.order) return true;
+            return a.order > b.order
+        });
 
         // Create sorts and filters options (if applicable)
         const sifterDiv = document.createElement("div");
