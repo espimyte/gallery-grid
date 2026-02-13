@@ -336,6 +336,7 @@ body {
     margin: auto 10px;
     height: 200px;
 
+    font-family: monospace;
     font-size: 20px;
 }
 .lb-nav:hover, .lb-nav.lb-pressed {
@@ -515,7 +516,7 @@ body {
     font-family: "Segoe UI Semilight",Tahoma,sans-serif;
 
     border-radius: 10px;
-    border: 1px solid rgb(70, 161, 85) ;
+    border: 1px solid rgb(70, 161, 85);
     background: linear-gradient(
         180deg,
         rgba(0, 52, 73, 0.9) 0%,
@@ -619,12 +620,6 @@ body {
 }
 .g-justifiedGrid.g-gridLoading:before {
     content: "Loading...";
-}
-
-@media screen and (max-width: 600px) {
-    .g-justifiedGridRow {
-        max-height: none;
-    }
 }
 
 /* Gallery fixed grid */
