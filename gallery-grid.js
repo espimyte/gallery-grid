@@ -1126,6 +1126,7 @@ class GalleryGrid extends HTMLElement {
     }
 
     applySourceChanges() {
+        if (!this.gridInitialized) return;
         var changedSources = [...this.sources];
 
         // Apply filters
