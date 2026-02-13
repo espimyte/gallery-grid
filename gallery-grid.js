@@ -5,7 +5,7 @@
 */
 
 /* User variables */
-var stylePath = "gallery-grid.css"; // The path to the gallery grid stylesheet
+var stylePath = "/style/gallery-grid.css";
 var smallScreenWidth = 600; // The width the widget considers to be a small screen (mobile)
 var disableShortcuts = false; // Whether or not keyboard shortcuts are enabled
 
@@ -1275,4 +1275,95 @@ function main() {
             <button class="lb-nav" id="lb_next"></button>
         </div>`
     document.getElementsByTagName('body')[0].appendChild(lbCore);
+}
+
+/* --- Modifications below this line --- */
+
+// Retrieves image source while respecting reduced motion setting. */
+function getImgSource(imgSrc) {
+    const currentSetting = localStorage.getItem("reducedmotion") === "true" ? true : false;
+    if (currentSetting && imgSrc.endsWith(".gif")) {
+        // Preload animated image
+        var img = new Image();
+        img.src = imgSrc;
+        return "/static"+imgSrc;
+    }
+    return imgSrc;
+}
+
+Lightbox.getImgSource = (imgSrc) => {
+    return getImgSource(imgSrc);
+};
+GalleryHandler.getCellImage = (source) => {
+    const processImage = source.thumb ?? source.img;
+    return getImgSource(processImage);
+}
+
+// Adds play icon to show on cells with animated images to grid cell generation
+const genPlayIcon = ({source}) => {
+    if (source.img.endsWith(".gif")) {
+        let play = document.createElement("div");
+        play.className = "g-gridCellPlay";
+        let playImg = document.createElement("img");
+        playImg.src = "/svg/play-hollow.svg";
+        play.appendChild(playImg);
+        return play;
+    }
+}
+GalleryHandler.justifiedCellElementGen["playIcon"] = genPlayIcon
+GalleryHandler.fixedCellElementGen["playIcon"] = genPlayIcon
+
+// Pagination
+GalleryHandler.onStart = (handler, {paging}) => {
+    if (!paging) return;
+    handler.origSources = [...handler.sources];
+
+    // Set source range
+    if (paging.loadLimit) {
+        handler.loadLimit = paging.loadLimit;
+        handler.sources = handler.sources.slice(0, paging.loadLimit);
+    }
+
+    // Pagination
+    handler.pg = new Pagination({
+        navId: paging.pageNavId, 
+        infoId: paging.pageInfoId, 
+        loadLimit: paging.loadLimit, 
+        sourceSize: handler.origSources.length,
+        queryEnabled: paging.pageQueryEnabled,
+        infScrollEnabled: paging.infScrollEnabled,
+        infScroll: false,
+        scrollToTop: paging.scrollToTop,
+        onUpdate: () => {
+            // Load view sources with given start index and load limit.
+            if (handler.pg) {
+                handler.sources = [...handler.origSources];
+                if (!handler.pg.infScroll) {
+                    const viewRange = handler.pg.getSourceRange();
+                    handler.sources = handler.sources.slice(viewRange.start, viewRange.end);
+                }
+                handler.refreshGrid();
+            }
+        }
+    });
+    
+    if (handler.pg) handler.pg.update();
+
+    // Pause/unpause page controls while lightbox is open/closed
+    Lightbox.setOnLightboxOpenEvent(() => {
+        if (handler.pg) handler.pg.controlsPaused = true;
+    });
+    Lightbox.setOnLightboxCloseEvent(() => {
+        if (handler.pg) handler.pg.controlsPaused = false;
+    });
+}
+
+GalleryHandler.onSourcesChanged = (handler, sources) => {
+    handler.origSources = [...sources];
+    if (handler.loadLimit) handler.origSources.slice(0, handler.loadLimit);
+    if (handler.pg) {
+        handler.pg.updateSource(handler.origSources.length);
+    } else {
+        handler.refreshGrid();
+    }
 }
