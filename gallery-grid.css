@@ -549,7 +549,7 @@ body {
     margin: 0;
 }
 .g-gridCellCaption a {
-    display: block;
+    display: inline-block;
     position: relative;
     color: var(--link-color);
     z-index: 1;
