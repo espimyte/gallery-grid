@@ -21,9 +21,9 @@ It is designed to be both simple to use and fully customizable, with or without 
 
 ## How to Install
 
-[Download Latest Version]()
+[Download Latest Version](https://github.com/espimyte/gallery-grid/releases/download/v1.0.0/gallery-grid.zip)
 
-Additional premade themes are available through the [web page](https://espy.world/gallery-grid) or [latest release]().
+Additional premade themes are available through the [web page](https://espy.world/gallery-grid) or [latest release](https://github.com/espimyte/gallery-grid/releases/tag/v1.0.0).
 
 Once downloaded, extract the `.zip` file.
 
