@@ -606,7 +606,7 @@ class GalleryHandler {
     }
 
     /** Returns the image to use for the grid cell. */
-    getCellImage(source) {
+    static getCellImage(source) {
         if (source.thumb) return source.thumb;
         return source.img;
     }
