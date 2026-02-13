@@ -484,6 +484,11 @@ body {
 .g-noframe .g-gridCellCaption {
     margin: 0;
 }
+.g-gridCellCaption a {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+}
 .g-gridCellCaption code {
     font-size: 0.9em;
     background-color: black;
