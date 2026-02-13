@@ -5,9 +5,9 @@
 */
 
 /* User variables */
-const stylePath = "/gallery-grid/gallery-grid.css";
-const smallScreenWidth = 600; // The width the widget considers to be a small screen (mobile)
-const disableShortcuts = false; // Whether or not keyboard shortcuts are enabled
+var stylePath = "gallery-grid.css"; // The path to the gallery grid stylesheet
+var smallScreenWidth = 600; // The width the widget considers to be a small screen (mobile)
+var disableShortcuts = false; // Whether or not keyboard shortcuts are enabled
 
 /* Default values */
 const Defaults = {
@@ -211,7 +211,26 @@ class Lightbox {
 
 /* Defines data for single image in the gallery. */
 class GallerySource {
-    constructor(element, {width, height, order}) {
+    constructor({id, img, thumb, imgWidth, imgHeight, title, desc, tags, render, thumbRender, scale, noframe, order}) {
+        this.id = id;
+        this.img = img;
+        this.thumb = thumb;
+
+        this.imgWidth = imgWidth;
+        this.imgHeight = imgHeight;
+
+        this.title = title;
+        this.desc = desc;
+        this.tags = tags;
+        this.scale = scale ?? 1;
+
+        this.render = render;
+        this.thumbRender = thumbRender;
+        this.noframe = noframe;
+        this.order = order;
+    }
+
+    static fromElement(element, {width, height, order}) {
         let scale = element.getAttribute("scale");
         if (!scale) scale = 1;
         scale = parseFloat(scale);
@@ -223,22 +242,7 @@ class GallerySource {
         let noframe = element.getAttribute("noframe");
         noframe = noframe === null ? false : noframe !== "false";
 
-        this.id = element.id;
-        this.img = element.getAttribute("src");
-        this.thumb = element.getAttribute("thumb");
-        this.imgWidth = width;
-        this.imgHeight = height;
-
-        this.title = element.getAttribute("title"); 
-        this.desc = element.getAttribute("desc");
-        this.tags = element.getAttribute("tags")?.split(",");
-        this.scale = scale ?? 1;
-
-        this.render = element.getAttribute("render");
-        this.thumbRender = element.getAttribute("thumb-render");
-        this.noframe = noframe;
-
-        this.order = order;
+        return new GallerySource({id: element.id, img: element.getAttribute("src"), thumb: element.getAttribute("thumb"), imgWidth: width, imgHeight: height, title: element.getAttribute("title"), desc: element.getAttribute("desc"), tags: element.getAttribute("tags")?.split(","), scale, noframe, order, render: element.getAttribute("render"), thumbRender: element.getAttribute("thumb-render")})
     }
 }
 
@@ -272,10 +276,10 @@ class GalleryHandler {
             };
             return btn;
         },
-        img: ({self, source}) => {
+        img: ({source}) => {
             // Image
             let img = document.createElement("img");
-            img.src = self.getCellImage(source);
+            img.src = GalleryHandler.getCellImage(source);
             img.className = "g-gridCellImage";
             if (source.thumbRender) img.style.imageRendering = source.thumbRender
             else if (source.render) img.style.imageRendering = source.render;
@@ -302,10 +306,10 @@ class GalleryHandler {
             if (!self.smallLightboxEnabled) effect.classList.add("g-smallScreenHide");
             return effect;
         },
-        img: ({self, source}) => {
+        img: ({source}) => {
             // Image
             let img = document.createElement("img");
-            img.src = self.getCellImage(source);
+            img.src = GalleryHandler.getCellImage(source);
             img.className = "g-gridCellImage";
             if (source.thumbRender) img.style.imageRendering = source.thumbRender
             else if (source.render) img.style.imageRendering = source.render;
@@ -334,7 +338,7 @@ class GalleryHandler {
     }
 
     constructor(sources, {
-        allowRandom = false, 
+        allowOpenFromRandom = false, 
         smallLightboxEnabled = true,
         captions = Defaults.CAPTIONS,
         hideTags = false,
@@ -353,7 +357,7 @@ class GalleryHandler {
         this.prevButton = document.getElementById("lb_prev");
         this.nextButton = document.getElementById("lb_next");
         this.randButton = document.getElementById("lb_randomButton");
-        this.allowRandom = allowRandom;
+        this.allowOpenFromRandom = allowOpenFromRandom;
 
         // Grid
         this.gridEl;
@@ -472,7 +476,7 @@ class GalleryHandler {
         // Random
         if (this.randButton) {
             this.randButton.addEventListener("click", function() {
-                if (self.focused || self.allowRandom) self.randomLightbox();
+                if (self.focused || self.allowOpenFromRandom) self.randomLightbox();
             }); 
         }
     }
@@ -590,7 +594,7 @@ class GalleryHandler {
                 }
             }
 
-            if (e.key == Keybinds.RANDOM && (self.allowRandom || self.focused)) {
+            if (e.key == Keybinds.RANDOM && (self.allowOpenFromRandom || self.focused)) {
                 self.randomLightbox();
             }
         });
@@ -799,7 +803,7 @@ class GalleryHandler {
                 console.error(`Missing width and height data for ${source.img}`);
             }
         }
-        addRow(rowHeight);
+        if (self.sources.length > 0) addRow(rowHeight);
     }
 
     /* Returns outer sizing of an element (borders, padding, and margin). */
@@ -1194,11 +1198,11 @@ class GalleryGrid extends HTMLElement {
         const cellOrder = imgEl.getAttribute("order") ?? order;
 
         if (this.gridType === "fixed") {
-            this.sources.push(new GallerySource(imgEl, {order: cellOrder}));
+            this.sources.push(GallerySource.fromElement(imgEl, {order: cellOrder}));
             if (this.gridInitialized) this.applySourceChanges();
         } else {
             if (imgEl.width && imgEl.height) {
-                this.sources.push(new GallerySource(imgEl, {width: imgEl.width, height: imgEl.height, order: cellOrder}));
+                this.sources.push(GallerySource.fromElement(imgEl, {width: imgEl.width, height: imgEl.height, order: cellOrder}));
                 if (this.gridInitialized) this.applySourceChanges();
             } else {
                 const cellImage = new Image();
@@ -1214,7 +1218,7 @@ class GalleryGrid extends HTMLElement {
                 })
                 loadPromise.then((success) => {
                     if (success) {
-                        this.sources.push(new GallerySource(imgEl, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: cellOrder}));
+                        this.sources.push(GallerySource.fromElement(imgEl, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: cellOrder}));
                         if (this.gridInitialized) this.applySourceChanges();
                     }
                 });
