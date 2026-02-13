@@ -201,9 +201,9 @@ body {
 /* Lightbox image */
 #lb_imageWrapper {
     position: relative;
-    width: fit-content;
+    width: 100%;
     height: fit-content;
-    margin: 0 auto;
+    display: flex;
 }
 #lb_image {
     position: relative;
@@ -604,6 +604,7 @@ body {
 }
 .g-justifiedGrid .g-gridCell {
     position: relative;
+    max-height: 100%;
 }
 .g-justifiedGrid .g-gridCellButton {
     background: transparent;
@@ -613,7 +614,7 @@ body {
     left: 0%;
 }
 .g-justifiedGrid .g-gridCellImage {
-    height: 100%;
+    max-height: 100%;
 }
 .g-justifiedGrid .g-gridCellLoading {
     display: none;
