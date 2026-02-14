@@ -546,6 +546,10 @@ body {
     .g-justifiedGridRow.g-smallFillWidth .g-gridCellImage {
         width: 100%;
     }
+    .g-justifiedGridRow.g-smallFillWidth .g-gridCell {
+        box-sizing: border-box;
+        width: calc(100% - 10px);
+    }
 }
 
 /* Gallery justified grid */
