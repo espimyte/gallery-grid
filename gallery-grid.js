@@ -850,6 +850,10 @@ class GalleryHandler {
 
     /* Organizes sources. */
     sortSources() {
+        this.sources.forEach((source, i) => {
+            if (!source.order) source.order = i;
+        })
+
         this.sources = this.sources.sort((a, b) => {
             return a.order > b.order;
         });
