@@ -40,7 +40,10 @@ const Keybinds = {
 const VALID_GRIDTYPES = ["fixed", "justified"];
 const VALID_CAPTIONS = ["always", "disabled", "smallscreen"];
 const VALID_FILTERS = ["tags", "none"];
-const VALID_SORTS = ["default", "alphabetical", "none"]
+const VALID_SORTS = ["default", "alphabetical", "none"];
+
+const STYLE_LOAD_EVENT_NAME = "ggstyleload";
+const styleLoadEvent = new Event(STYLE_LOAD_EVENT_NAME);
 
 main();
 
@@ -507,6 +510,7 @@ class GalleryHandler {
                 self.nextButton.style.display = "block";
             }
         })
+        addEventListener(STYLE_LOAD_EVENT_NAME, () => self.refreshGrid());
 
         // Swipe controls for mobile
         let init = {x: 0, y: 0};
@@ -686,8 +690,6 @@ class GalleryHandler {
         parent.appendChild(this.gridEl);
         this.maxRowHeight = maxRowHeight;
         this.smallMaxRowHeight = smallMaxRowHeight;
-
-        self.refreshGrid = () => {};
 
         self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth});
 
@@ -940,6 +942,7 @@ class GalleryGrid extends HTMLElement {
         this.addAll(this.children)
     }
 
+    /* Validates number input. */
     validateNumber(valueName, defaultValue) {
         const numStr = this.getAttribute(valueName);
         if (!numStr) return defaultValue;
@@ -955,6 +958,7 @@ class GalleryGrid extends HTMLElement {
         return num;
     }
 
+    /* Validates selection input. */
     validateSelection(valueName, acceptedValues, defaultValue) {
         const value = this.getAttribute(valueName);
         if (!value) return defaultValue;
@@ -967,11 +971,13 @@ class GalleryGrid extends HTMLElement {
         return value;
     }
 
+    /* Validates boolean input. */
     validateBoolean(valueName) {
         const value = this.getAttribute(valueName)
         return value === null ? false : value !== "false";
     }
 
+    /* Initializes gallery grid. Runs once per grid. */
     initializeGrid() {
         this.innerHTML = "";
 
@@ -1148,6 +1154,7 @@ class GalleryGrid extends HTMLElement {
         this.applySourceChanges();
     }
 
+    /** Refreshes grid and updates sources. */
     applySourceChanges() {
         if (!this.gridInitialized) return;
         var changedSources = [...this.sources];
@@ -1204,6 +1211,7 @@ class GalleryGrid extends HTMLElement {
         }
     }
 
+    /* Adds multiple gallery grid sources from an array of image elements. */
     addAll(imgEls) {
         var promises = [];
         let order = 0;
@@ -1240,6 +1248,12 @@ class GalleryGrid extends HTMLElement {
         } else this.applySourceChanges();
     }
 
+    /** 
+     * Adds a single gallery grid source from an image element.
+     * @param imgEl the image element to derive from
+     * @param order (OPTIONAL) the order the image should display in the grid
+     * @param refresh (OPTIONAL) whether or not the grid should refresh after adding the image
+     */
     add(imgEl, order = 0, refresh = true) {
         if (!imgEl.getAttribute("src")) {
             console.error("Image is missing src URL.")
@@ -1280,6 +1294,7 @@ class GalleryGrid extends HTMLElement {
         }
     }
 
+    /* Clears all gallery grid sources. */
     clear() {
         if (!this.gridInitialized) {
             console.warn("Cannot clear grid before initialization");
@@ -1299,6 +1314,10 @@ function main() {
         cssLink.rel = 'stylesheet';
         cssLink.href = stylePath;
         document.getElementsByTagName('head')[0].appendChild(cssLink);
+
+        cssLink.onload = () => {
+            dispatchEvent(styleLoadEvent);
+        }
     }
 
     // Add lightbox element
