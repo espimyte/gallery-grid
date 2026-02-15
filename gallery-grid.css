@@ -175,6 +175,7 @@ body {
     border-color: rgb(116, 113, 121);
 
     font-size: 20px;
+    font-family: monospace;
 }
 #lb_smallExitButton:before {
     content: "X";
@@ -245,6 +246,7 @@ body {
     gap: 5px;
     font-family: monospace;
     margin-bottom: 5px;
+    justify-content: center;
 }
 #lb_tags span {
     font-size: 0.85em;
