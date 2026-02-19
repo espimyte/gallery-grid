@@ -857,7 +857,7 @@ class GalleryHandler {
         })
 
         this.sources = this.sources.sort((a, b) => {
-            return a.order > b.order;
+            return (a.order > b.order) || -(a.order < b.order);
         });
     }
 
@@ -1021,7 +1021,7 @@ class GalleryGrid extends HTMLElement {
                         });
                     } else hasUntaggedSources = true;
                 });
-                filterList.sort((a,b) => a > b);
+                filterList.sort((a, b) => a > b || -(a < b));
                 if (hasUntaggedSources) filterList.push(undefined);
             }
 
@@ -1185,12 +1185,12 @@ class GalleryGrid extends HTMLElement {
             if (this.sorting === "ascending") {
                 changedSources = changedSources.sort((a, b) => {
                     if (!b.title) return true;
-                    return a.title > b.title
+                    return a.title > b.title || -(a.title < b.title)
                 });
             } else {
                 changedSources = changedSources.sort((a, b) => {
                     if (!a.title) return true;
-                    return a.title <= b.title
+                    return a.title < b.title || -(a.title >= b.title)
                 })
             }
             changedSources.forEach((source, i) => {
