@@ -124,6 +124,10 @@ class Lightbox {
             }
         }
 
+
+        this.imgEl.src = ""; // Unload previous image
+        this.imgEl.style.opacity = 0;
+
         this.imgEl.src = img;
         this.imgEl.style.imageRendering = render ? render : undefined;
         if (noframe) this.imgEl.classList.add("lb-noframe");
@@ -147,15 +151,19 @@ class Lightbox {
         this.opened = true;
 
         let heightBuffer = this.infoEl.offsetHeight;
-        if (this.isSmallScreen()) {
-            heightBuffer += 120;
-        }
+        if (this.isSmallScreen()) heightBuffer += 120;
 
         this.imgWrapperEl.style.maxHeight = `calc(100% - ${heightBuffer}px)`;
+        this.imgEl.style.width = '500px';
+        this.imgEl.style.height = '500px';
 
+        this.loadingEl.style.transition = "opacity 0.1s";
         this.loadingEl.style.opacity = "1";
+
         this.imgEl.onload = () => {
+            this.imgEl.style.opacity = 1;
             this.loadingEl.style.opacity = "0";
+            this.loadingEl.style.transition = "";
             if (this.imgScale != 1) {
                 this.imgEl.style.width = `${this.imgEl.naturalWidth * this.imgScale}px`;
                 this.imgEl.style.height = `${this.imgEl.naturalHeight * this.imgScale}px`;
