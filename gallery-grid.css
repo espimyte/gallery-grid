@@ -201,19 +201,22 @@ body {
     display: flex;
 }
 #lb_image {
+    --border-width: 1px;
+    --padding: 5px;
+
     position: relative;
     z-index: 1;
 
     object-fit: contain;
     image-rendering: auto;
 
-    max-width: 100%;
-    max-height: 100%;
+    max-width: calc(100% - (var(--border-width) * 2 + var(--padding) * 2));
+    max-height: calc(100% - (var(--border-width) * 2 + var(--padding) * 2));
     margin: auto;
-    padding: 5px 5px;
+    padding: var(--padding);
 
-    box-sizing: border-box;
-    border: 1px solid rgb(48, 130, 143);
+    box-sizing: content-box;
+    border: var(--border-width) solid rgb(48, 130, 143);
 
     background: linear-gradient(
         180deg,
@@ -402,7 +405,6 @@ body {
     z-index: 0;
 
     opacity: 0;
-    transition: opacity 1s;
 
     display: flex;
     justify-content: center;
