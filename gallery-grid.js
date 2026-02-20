@@ -2,6 +2,7 @@
 *   (DO NOT REMOVE THIS HEADER)
 *
 *   Author: espimyte (https://espy.world)
+*   https://espy.world/gallery-grid
 */
 
 /* User variables */
