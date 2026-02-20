@@ -415,14 +415,22 @@ body {
     justify-content: center;
     align-items: center;
 
-    background: rgba(0, 0, 0, 0.5);
     width: 100%;
     height: 100%;
 
-    border: 1px solid gray;
+    border: var(--border-width) solid transparent;
+    border-image: var(--border-image) 18 round;
+
     box-sizing: border-box;
 }
+#lb_loading:after {
+    content: "";
+    background: rgba(255, 101, 155, 0.5);
+    width: 100%;
+    height: 100%;
+}
 #lb_loading:before {
+    position: absolute;
     content: "...";
     animation: loading 1s linear infinite;
 }
