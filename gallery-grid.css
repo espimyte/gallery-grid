@@ -414,7 +414,9 @@ body {
     width: 100%;
     height: 100%;
 
-    border: 1px solid gray;
+    border: 1px solid #2cac88;
+    border-radius: 10px;
+
     box-sizing: border-box;
 }
 #lb_loading:before {
