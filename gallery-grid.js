@@ -1380,7 +1380,7 @@ function getImgSource(imgSrc) {
 Lightbox.getImgSource = (imgSrc) => {
     return getImgSource(imgSrc);
 };
-GalleryHandler.getCellImage = (source) => {
+Gallery.getCellImage = (source) => {
     const processImage = source.thumb ?? source.img;
     return getImgSource(processImage);
 }
@@ -1396,11 +1396,11 @@ const genPlayIcon = ({source}) => {
         return play;
     }
 }
-GalleryHandler.justifiedCellElementGen["playIcon"] = genPlayIcon
-GalleryHandler.fixedCellElementGen["playIcon"] = genPlayIcon
+Gallery.justifiedCellElementGen["playIcon"] = genPlayIcon
+Gallery.fixedCellElementGen["playIcon"] = genPlayIcon
 
 // Pagination
-GalleryHandler.onStart = (handler, {paging}) => {
+Gallery.onStart = (handler, {paging}) => {
     if (!paging) return;
     handler.origSources = [...handler.sources];
 
@@ -1444,7 +1444,7 @@ GalleryHandler.onStart = (handler, {paging}) => {
     });
 }
 
-GalleryHandler.onSourcesChanged = (handler, sources) => {
+Gallery.onSourcesChanged = (handler, sources) => {
     handler.origSources = [...sources];
     if (handler.loadLimit) handler.origSources.slice(0, handler.loadLimit);
     if (handler.pg) {
