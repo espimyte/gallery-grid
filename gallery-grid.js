@@ -358,7 +358,7 @@ class Gallery {
         allowOpenFromRandom = false, 
         smallLightboxEnabled = true,
         captions = Defaults.CAPTIONS,
-        hideTags = false,
+        hiddenElements,
         extra = {}}) {
 
         var self = this;
@@ -386,7 +386,7 @@ class Gallery {
         this.focused = false;
         this.smallLightboxEnabled = smallLightboxEnabled; // Whether or not the lightbox is enabled for small screens
         this.captions = captions; // Whether or not description is embed on cells
-        this.hideTags = hideTags; // Whether or not to show tags in lightbox
+        this.hiddenElements = hiddenElements; // Elements to hide from lightbox
     
         // Setup
         this.setupButtons();
@@ -412,7 +412,11 @@ class Gallery {
     setLightbox(i) {
         const source = this.sources[i];
 
-        Lightbox.openWith({...source, tags: this.hideTags ? undefined : source.tags, imgScale: source.scale})
+        Lightbox.openWith({...source, 
+            tags: this.hiddenElements?.includes("tags") ? undefined : source.tags, 
+            title: this.hiddenElements?.includes("title") ? undefined : source.title, 
+            desc: this.hiddenElements?.includes("desc") ? undefined : source.desc, 
+            imgScale: source.scale})
 
         this.focused = true;
 
@@ -888,7 +892,7 @@ class GalleryGrid extends HTMLElement {
         "cellheight", 
         "maxrowheight", 
         "captions", 
-        "hidetags", 
+        "hide", 
         "ascending",
         "small-fillwidth",
         "small-maxrowheight", 
@@ -1010,7 +1014,7 @@ class GalleryGrid extends HTMLElement {
 
         // Other attributes
         var captions = this.validateSelection("captions", VALID_CAPTIONS, Defaults.CAPTIONS);
-        var hideTags = this.validateBoolean("hidetags");
+        var hiddenElements = this.getAttribute("hide")?.split(",");
 
         // Create sorts and filters options (if applicable)
         const sifterDiv = document.createElement("div");
@@ -1118,7 +1122,7 @@ class GalleryGrid extends HTMLElement {
         this.appendChild(sifterDiv);
 
         // Create grid
-        this.gallery = new Gallery(this.sources, {smallLightboxEnabled: !smallLbDisabled, captions, hideTags});
+        this.gallery = new Gallery(this.sources, {smallLightboxEnabled: !smallLbDisabled, captions, hiddenElements});
 
         if (this.gridType == "fixed") {
             this.gallery.initializeFixedGrid(this, {
