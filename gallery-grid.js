@@ -13,11 +13,11 @@ var disableShortcuts = false; // Whether or not keyboard shortcuts are enabled
 /* Default values */
 const Defaults = {
     GRID_TYPE: "fixed", // Accepted values: fixed, justified
+    
     CELL_WIDTH: 250, // Grid cell width (for fixed grids)
     CELL_HEIGHT: 250, // Grid cell height (for fixed grids)
 
     MAX_ROW_HEIGHT: 500, // Max row height for justified grid
-    SMALL_MAX_ROW_HEIGHT: 1000, // Small screen max row height for justified grid
 
     MAX_PER_PAGE: undefined, // Max images per page, no pagination if undefined
     CAPTIONS: "disabled", // Embed description - Accepted values: always, disabled, smallscreen
@@ -1002,7 +1002,7 @@ class GalleryGrid extends HTMLElement {
 
         // Small screen attributes
         var smallFillWidth = this.validateBoolean("small-fillwidth");
-        var smallMaxRowHeight = this.validateNumber("small-maxrowheight", this.validateNumber("maxrowheight", Defaults.SMALL_MAX_ROW_HEIGHT));
+        var smallMaxRowHeight = this.validateNumber("small-maxrowheight", maxRowHeight);
         var smallLbDisabled = this.validateBoolean("small-lbdisabled");
 
         // Sifter attributes
@@ -1170,7 +1170,7 @@ class GalleryGrid extends HTMLElement {
     /** Refreshes grid and updates sources. */
     applySourceChanges() {
         if (!this.gridInitialized) return;
-        var changedSources = [...this.sources];
+        let changedSources = [...this.sources];
 
         // Apply filters
         if (this.filters !== "none" && this.includeFilters) {
@@ -1188,11 +1188,17 @@ class GalleryGrid extends HTMLElement {
 
         // Apply sorts
         if (this.sort == "none" && this.ascending ) {
-            changedSources = changedSources.reverse();
+            changedSources = changedSources.toReversed();
+            changedSources.forEach((source, i) => {
+                source.order = i;
+            });
         }
         if (this.sort && this.sort == "default") {
             if (this.sorting === "ascending") {
-                changedSources = changedSources.reverse();
+                changedSources = changedSources.toReversed();
+                changedSources.forEach((source, i) => {
+                    source.order = i;
+                });
             }
         } else if (this.sort && this.sort == "alphabetical") {
             if (this.sorting === "ascending") {
