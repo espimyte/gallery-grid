@@ -366,12 +366,13 @@ body {
     width: 100%;
     height: 100%;
 
-    border: 1px solid gray;
+    border: 1px solid var(--terminal-green);
     box-sizing: border-box;
 }
 #lb_loading:before {
     content: "...";
     animation: loading 1s linear infinite;
+    color: var(--terminal-green);
 }
 
 /* Gallery grid */
