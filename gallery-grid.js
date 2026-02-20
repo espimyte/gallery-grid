@@ -2,6 +2,7 @@
 *   (DO NOT REMOVE THIS HEADER)
 *
 *   Author: espimyte (https://espy.world)
+*   https://espy.world/gallery-grid
 */
 
 /* User variables */
@@ -260,7 +261,7 @@ class GallerySource {
 }
 
 /* Handles gallery functionality. */
-class GalleryHandler {
+class Gallery {
     SWIPE_SPEED = 100;
     SWIPE_BUMP_SPEED = 200;
 
@@ -293,7 +294,7 @@ class GalleryHandler {
             // Image
             let img = source.element ?? document.createElement("img");
             img.style.display = '';
-            img.src = GalleryHandler.getCellImage(source);
+            img.src = Gallery.getCellImage(source);
             img.className = "g-gridCellImage";
             if (source.thumbRender) img.style.imageRendering = source.thumbRender
             else if (source.render) img.style.imageRendering = source.render;
@@ -324,7 +325,7 @@ class GalleryHandler {
             // Image
             let img = source.element ?? document.createElement("img");
             img.style.display = '';
-            img.src = GalleryHandler.getCellImage(source);
+            img.src = Gallery.getCellImage(source);
             img.className = "g-gridCellImage";
 
             if (source.thumbRender) img.style.imageRendering = source.thumbRender
@@ -396,7 +397,7 @@ class GalleryHandler {
         for (const [key, value] of Object.entries(extra)) {
             this[key] = value;
         }
-        GalleryHandler.onStart(self, extra);
+        Gallery.onStart(self, extra);
     }
 
     /* Runs on initialization. Override this to create custom functionality. */
@@ -666,7 +667,7 @@ class GalleryHandler {
             cell.style.aspectRatio = `${width}/${height}`;
 
             const cellElements = {};
-            for (const [key, gen] of Object.entries(GalleryHandler.fixedCellElementGen)) {
+            for (const [key, gen] of Object.entries(Gallery.fixedCellElementGen)) {
                 const cellElement = gen({self: self, source: source, index: i});
                 cellElements[key] = cellElement
                 if (cellElement && key !== "btn" && key !== "img") {
@@ -734,12 +735,12 @@ class GalleryHandler {
             let extraHeight = 0;
 
             const cellElements = {};
-            for (const [key, gen] of Object.entries(GalleryHandler.justifiedCellElementGen)) {
+            for (const [key, gen] of Object.entries(Gallery.justifiedCellElementGen)) {
                 const cellElement = gen({self: self, source: source, index: index});
                 cellElements[key] = cellElement;
 
                 if (key === "img") {
-                    const imgOuterSizes = GalleryHandler.getOuterSize(cellElement);
+                    const imgOuterSizes = Gallery.getOuterSize(cellElement);
                     extraWidth += imgOuterSizes.outerWidth;
                     extraHeight += imgOuterSizes.outerHeight;
                 }
@@ -747,7 +748,7 @@ class GalleryHandler {
                 if (cellElement) cell.appendChild(cellElement);
             }
 
-            const cellOuterSizes = GalleryHandler.getOuterSize(cell);
+            const cellOuterSizes = Gallery.getOuterSize(cell);
             extraWidth += cellOuterSizes.outerWidth;
             extraHeight += cellOuterSizes.outerHeight;
 
@@ -873,7 +874,7 @@ class GalleryHandler {
     updateSources(sources = this.sources) {
         this.sources = sources;
         this.sortSources();
-        GalleryHandler.onSourcesChanged(this, sources);
+        Gallery.onSourcesChanged(this, sources);
     }
 }
 
@@ -904,7 +905,7 @@ class GalleryGrid extends HTMLElement {
         this.gridInitialized = false;
         
         this.gridType;
-        this.galleryHandler;
+        this.gallery;
         this.sources = [];
 
         this.page = 1;
@@ -1117,16 +1118,16 @@ class GalleryGrid extends HTMLElement {
         this.appendChild(sifterDiv);
 
         // Create grid
-        this.galleryHandler = new GalleryHandler(this.sources, {smallLightboxEnabled: !smallLbDisabled, captions, hideTags});
+        this.gallery = new Gallery(this.sources, {smallLightboxEnabled: !smallLbDisabled, captions, hideTags});
 
         if (this.gridType == "fixed") {
-            this.galleryHandler.initializeFixedGrid(this, {
+            this.gallery.initializeFixedGrid(this, {
                 width: width, 
                 height: height,
                 smallFillWidth
             })
         } else if (this.gridType == "justified") {
-            this.galleryHandler.initializeJustifiedGrid(this, {smallMaxRowHeight, maxRowHeight, smallFillWidth})
+            this.gallery.initializeJustifiedGrid(this, {smallMaxRowHeight, maxRowHeight, smallFillWidth})
         }
 
         // Create page nav (if applicable)
@@ -1213,9 +1214,9 @@ class GalleryGrid extends HTMLElement {
             this.pageNavNum.textContent = `${this.page}/${pageCount}`;
             this.pagePrevButton.disabled = this.page === 1;
             this.pageNextButton.disabled = this.page === pageCount;
-            this.galleryHandler.updateSources(changedSources.slice(((this.page - 1) * this.maxPerPage), (this.page * this.maxPerPage)));
+            this.gallery.updateSources(changedSources.slice(((this.page - 1) * this.maxPerPage), (this.page * this.maxPerPage)));
         } else {
-            this.galleryHandler.updateSources(changedSources);
+            this.gallery.updateSources(changedSources);
         }
     }
 
