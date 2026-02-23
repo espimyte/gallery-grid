@@ -913,6 +913,7 @@ class GalleryGrid extends HTMLElement {
         this.sources = [];
 
         this.page = 1;
+        this.pageCount;
         this.maxPerPage;
         this.pageNav;
         this.pageNavNum;
@@ -1136,7 +1137,7 @@ class GalleryGrid extends HTMLElement {
 
         // Create page nav (if applicable)
         if (this.maxPerPage) {
-            const pageCount = Math.max(Math.floor(this.sources.length / this.maxPerPage) + ((this.sources.length % this.maxPerPage) !== 0 ? 1 : 0), 1)
+            this.pageCount = Math.max(Math.floor(this.sources.length / this.maxPerPage) + ((this.sources.length % this.maxPerPage) !== 0 ? 1 : 0), 1)
             this.pageNav = document.createElement("div");
             this.pageNav.className = "g-pageNav";
 
@@ -1156,7 +1157,7 @@ class GalleryGrid extends HTMLElement {
             this.pageNextButton.className = "g-pageNavNext g-pageNavButton";
             this.pageNav.appendChild(this.pageNextButton);
             this.pageNextButton.onclick = () => {
-                this.page = Math.min(pageCount, this.page + 1);
+                this.page = Math.min(this.pageCount, this.page + 1);
                 this.applySourceChanges();
             }
 
@@ -1219,11 +1220,11 @@ class GalleryGrid extends HTMLElement {
 
         // Apply pagination
         if (this.maxPerPage) {
-            const pageCount = Math.max(Math.floor(changedSources.length / this.maxPerPage) + ((changedSources.length % this.maxPerPage) !== 0 ? 1 : 0), 1)
-            this.page = Math.min(this.page, pageCount);
-            this.pageNavNum.textContent = `${this.page}/${pageCount}`;
+            this.pageCount = Math.max(Math.floor(changedSources.length / this.maxPerPage) + ((changedSources.length % this.maxPerPage) !== 0 ? 1 : 0), 1)
+            this.page = Math.min(this.page, this.pageCount);
+            this.pageNavNum.textContent = `${this.page}/${this.pageCount}`;
             this.pagePrevButton.disabled = this.page === 1;
-            this.pageNextButton.disabled = this.page === pageCount;
+            this.pageNextButton.disabled = this.page === this.pageCount;
             this.gallery.updateSources(changedSources.slice(((this.page - 1) * this.maxPerPage), (this.page * this.maxPerPage)));
         } else {
             this.gallery.updateSources(changedSources);
