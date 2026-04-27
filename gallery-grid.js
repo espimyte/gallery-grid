@@ -788,6 +788,7 @@ class Gallery {
         }
   
         // Clears grid
+        self.gridEl.style.minHeight = `${self.gridEl.offsetHeight}px`;
         self.gridEl.textContent = "";
 
         self.gridEl.classList.add("g-grid");
@@ -834,6 +835,8 @@ class Gallery {
                 child.style.height = `calc(100% - ${imageData[0].extraHeight}px)`
             });
         }
+
+        self.gridEl.style.minHeight = ``;
     }
 
     /* Returns outer sizing of an element (borders, padding, and margin). */
