@@ -1,6 +1,7 @@
 /*
 *   (DO NOT REMOVE THIS HEADER)
 *
+*   Gallery Grid (v.1.1.2)
 *   Author: espimyte (https://espy.world)
 *   https://espy.world/gallery-grid
 */
@@ -778,14 +779,17 @@ class Gallery {
             newRow.style.maxWidth = `${Math.min(gridWidth, gridWidth * (maxRowHeight / rowHeight))}px`;
             if (smallFillWidth) newRow.classList.add("g-smallFillWidth");
 
-            self.gridEl.appendChild(newRow);
-            rows.push(newRow);
+            if (newRow.childElementCount > 0) {
+                self.gridEl.appendChild(newRow);
+                rows.push(newRow);
+            }
 
             currRow = document.createElement("div");
             return newRow;
         }
   
         // Clears grid
+        self.gridEl.style.minHeight = `${self.gridEl.offsetHeight}px`;
         self.gridEl.textContent = "";
 
         self.gridEl.classList.add("g-grid");
@@ -832,6 +836,8 @@ class Gallery {
                 child.style.height = `calc(100% - ${imageData[0].extraHeight}px)`
             });
         }
+
+        self.gridEl.style.minHeight = ``;
     }
 
     /* Returns outer sizing of an element (borders, padding, and margin). */
