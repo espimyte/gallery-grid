@@ -778,8 +778,10 @@ class Gallery {
             newRow.style.maxWidth = `${Math.min(gridWidth, gridWidth * (maxRowHeight / rowHeight))}px`;
             if (smallFillWidth) newRow.classList.add("g-smallFillWidth");
 
-            self.gridEl.appendChild(newRow);
-            rows.push(newRow);
+            if (newRow.childElementCount > 0) {
+                self.gridEl.appendChild(newRow);
+                rows.push(newRow);
+            }
 
             currRow = document.createElement("div");
             return newRow;
