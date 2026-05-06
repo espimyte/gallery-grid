@@ -1,7 +1,7 @@
 /*
 *   (DO NOT REMOVE THIS HEADER)
 *
-*   Gallery Grid (v.1.1.2)
+*   Gallery Grid (v.1.2.0)
 *   Author: espimyte (https://espy.world)
 *   https://espy.world/gallery-grid
 */
@@ -102,7 +102,7 @@ class Lightbox {
     }
 
     /** Sets lightbox to current data. */
-    static set({title, desc, tags, img, render, noframe, imgWidth, imgHeight, imgScale = 1}) {
+    static set({title, desc, tags, img, render, noframe, imgWidth, imgHeight, imgScale = 1, hidenav = false}) {
         if (this.disabled) return;
         if (this.isSmallScreen() && !this.smallScreenEnabled) return;
 
@@ -132,8 +132,12 @@ class Lightbox {
 
         this.imgEl.src = img;
         this.imgEl.style.imageRendering = render ? render : undefined;
+
         if (noframe) this.imgEl.classList.add("lb-noframe");
         else this.imgEl.classList.remove("lb-noframe");
+
+        if (hidenav) this.lightboxEl.classList.add("lb-hidenav");
+        else this.lightboxEl.classList.remove("lb-hidenav");
     }
 
     /** Opens the lightbox. */
@@ -417,7 +421,7 @@ class Gallery {
             tags: this.hiddenElements?.includes("tags") ? undefined : source.tags, 
             title: this.hiddenElements?.includes("title") ? undefined : source.title, 
             desc: this.hiddenElements?.includes("desc") ? undefined : source.desc, 
-            imgScale: source.scale})
+            imgScale: source.scale, hidenav: this.hiddenElements?.includes("nav")})
 
         this.focused = true;
 
