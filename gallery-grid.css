@@ -23,6 +23,7 @@
     .lb-nav - lightbox navigation button
     #lb_prev - lightbox previous navigation button
     #lb_next - lightbox next navigation button
+    .lb-hidenav - class for when 'nav' is included in 'hide' attribute to hide navigation
 
     #lb_loading - lightbox image loading element
 
@@ -322,6 +323,9 @@ body {
 }
 #lb_prev:before {
     content: "<";
+}
+.lb-hidenav .lb-nav {
+    display: none !important;
 }
 @media screen and (max-width: 600px) {
     .lb-nav {
