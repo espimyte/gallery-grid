@@ -341,7 +341,6 @@ body {
 }
 .lb-nav:hover, .lb-nav.lb-pressed {
     backdrop-filter: brightness(50%);
-    transition: 0.1s;
     color: white;
     background: linear-gradient(
         180deg,
