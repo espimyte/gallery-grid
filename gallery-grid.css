@@ -596,7 +596,7 @@ body {
 
 @media screen and (max-width: 600px) {
     .g-smallScreenHide {
-        display: none;
+        display: none !important;
     }
 }
 
