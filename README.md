@@ -57,7 +57,7 @@ If all you need is a simple grid, you can stop right here!
 For more details instructions on how to use more features of the widget, see the [web page](https://espy.world/gallery-grid).
 
 ## Terms of Use
-Do NOT remove the header comments in either the CSS or JavaScript files!
+Do NOT remove the header comments in the JavaScript file!
 
 You are still free to edit these files as much as you like. As long as the credit inside of the header is intact, there's no problem.
 
