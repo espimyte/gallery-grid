@@ -469,9 +469,12 @@ gallery-grid img:not(.g-gridCellImage) {
     position: absolute;
     padding: 0;
     margin: 0;
+    top: calc((var(--border-width)) * -1);
+    left: calc((var(--border-width)) * -1);
     width: calc(100% + (var(--border-width) * 2));
     height: calc(100% + (var(--border-width) * 2));
     transform: translate(- var(--border-width), - var(--border-width));
+    box-sizing: border-box;
 }
 .g-gridCellButton:hover {
     cursor: pointer;
@@ -563,7 +566,7 @@ gallery-grid img:not(.g-gridCellImage) {
     justify-content: center;
     align-items: center;
 
-    border: 1px solid gray;
+    background: rgba(0, 0, 255, 0.4);
     box-sizing: border-box;
 
     width: 100%;
