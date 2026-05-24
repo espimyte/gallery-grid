@@ -365,8 +365,15 @@ body {
 }
 
 /* Gallery grid */
+gallery-grid {
+    display: flex;
+    flex-direction: column;
+}
 gallery-grid img:not(.g-gridCellImage) {
   display: none;
+}
+.g-grid {
+    order: 200;
 }
 .g-grid:empty {
     font-family: monospace;
@@ -586,6 +593,7 @@ gallery-grid img:not(.g-gridCellImage) {
     margin: 10px;
     font-family: monospace;
     color: white;
+    order: 300;
 }
 .g-pageNavButton {
     margin: 0;
@@ -616,6 +624,7 @@ gallery-grid img:not(.g-gridCellImage) {
     margin: 10px;
     font-family: monospace;
     font-size: 1.1em;
+    order: 100;
 }
 .g-sifter {
     color: white;
