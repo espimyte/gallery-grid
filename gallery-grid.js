@@ -21,7 +21,7 @@ const Defaults = {
     MAX_ROW_HEIGHT: 500, // Max row height for justified grid
 
     MAX_PER_PAGE: undefined, // Max images per page, no pagination if undefined
-    PAGE_NAV_DISPLAY: "bottom", // Where page nav is in relation to grid
+    PAGENAV_DISPLAY: "bottom", // Where page nav is in relation to grid
 
     CAPTIONS: "disabled", // Embed description - Accepted values: always, disabled, smallscreen
 
