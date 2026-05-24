@@ -466,6 +466,7 @@ body {
     order: 1;
     border-radius: 20px;
     border: 1px solid rgb(0, 255, 136);
+    box-sizing: border-box;
 }
 .g-gridCellButton {
     order: 2;
@@ -558,8 +559,10 @@ body {
     justify-content: center;
     align-items: center;
 
-    border: 1px solid gray;
+    color: #15fff3;
+    border-radius: 20px;
     box-sizing: border-box;
+    background: rgba(0, 88, 104, 0.363);
 
     width: 100%;
     height: 100%;
