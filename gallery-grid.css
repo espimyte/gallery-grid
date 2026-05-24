@@ -351,6 +351,7 @@ body {
     justify-content: center;
     align-items: center;
 
+    color: gray;
     background: rgba(0, 0, 0, 0.5);
     width: 100%;
     height: 100%;
@@ -580,6 +581,7 @@ body {
     gap: 5px;
     margin: 10px;
     font-family: monospace;
+    color: white;
 }
 .g-pageNavButton {
     margin: 0;
@@ -612,6 +614,7 @@ body {
     font-size: 1.1em;
 }
 .g-sifter {
+    color: white;
     accent-color: gray;
     display: flex;
     align-items: center;
