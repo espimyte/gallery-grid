@@ -1346,6 +1346,10 @@ customElements.define('gallery-grid', GalleryGrid);
 function main() {
     // Apply CSS
     if (!document.querySelector(`link[href='${stylePath}'`)) {
+        Object.values(document.querySelectorAll('gallery-grid')).forEach((value) => {
+            value.style.display = "none";
+        })
+
         const cssLink = document.createElement('link');
         cssLink.type = 'text/css';
         cssLink.rel = 'stylesheet';
@@ -1353,6 +1357,9 @@ function main() {
         document.getElementsByTagName('head')[0].appendChild(cssLink);
 
         cssLink.onload = () => {
+            Object.values(document.querySelectorAll('gallery-grid')).forEach((value) => {
+                value.style.display = "";
+            })
             dispatchEvent(styleLoadEvent);
         }
     }
@@ -1360,6 +1367,7 @@ function main() {
     // Add lightbox element
     const lbCore = document.createElement("div");
     lbCore.id = "lb";
+    lbCore.style.display = "none";
     lbCore.innerHTML = `
         <div id="lb_wrapper">     
             <button class="lb-nav" id="lb_prev"></button>

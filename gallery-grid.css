@@ -365,6 +365,9 @@ body {
 }
 
 /* Gallery grid */
+gallery-grid img:not(.g-gridCellImage) {
+  display: none;
+}
 .g-grid:empty {
     font-family: monospace;
     border: 1px dashed gray;
