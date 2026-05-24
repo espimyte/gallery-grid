@@ -371,6 +371,7 @@ body {
     height: 50px;
 }
 .g-grid:empty:before {
+    color: white;
     content: "Nothing here!";
     margin: auto;
     padding: 5px;
