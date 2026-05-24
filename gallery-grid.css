@@ -350,6 +350,7 @@ body {
     justify-content: center;
     align-items: center;
 
+    color: gray;
     background: rgba(0, 0, 0, 0.5);
     width: 100%;
     height: 100%;
@@ -363,12 +364,23 @@ body {
 }
 
 /* Gallery grid */
+gallery-grid {
+    display: flex;
+    flex-direction: column;
+}
+gallery-grid img:not(.g-gridCellImage) {
+  display: none;
+}
+.g-grid {
+    order: 200;
+}
 .g-grid:empty {
     font-family: monospace;
     border: 1px dashed gray;
     height: 50px;
 }
 .g-grid:empty:before {
+    color: white;
     content: "Nothing here!";
     margin: auto;
     padding: 5px;
@@ -579,6 +591,8 @@ body {
     gap: 5px;
     margin: 10px;
     font-family: monospace;
+    color: white;
+    order: 300;
 }
 .g-pageNavButton {
     margin: 0;
@@ -609,8 +623,10 @@ body {
     margin: 10px;
     font-family: monospace;
     font-size: 1.1em;
+    order: 100;
 }
 .g-sifter {
+    color: white;
     accent-color: gray;
     display: flex;
     align-items: center;
