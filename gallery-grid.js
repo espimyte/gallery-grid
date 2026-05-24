@@ -21,6 +21,8 @@ const Defaults = {
     MAX_ROW_HEIGHT: 500, // Max row height for justified grid
 
     MAX_PER_PAGE: undefined, // Max images per page, no pagination if undefined
+    PAGE_NAV_DISPLAY: "bottom", // Where page nav is in relation to grid
+
     CAPTIONS: "disabled", // Embed description - Accepted values: always, disabled, smallscreen
 
     FILTERS: "none", // Filter type for the grid - Accepted values: tags, none
@@ -43,6 +45,7 @@ const VALID_GRIDTYPES = ["fixed", "justified"];
 const VALID_CAPTIONS = ["always", "disabled", "smallscreen"];
 const VALID_FILTERS = ["tags", "none"];
 const VALID_SORTS = ["default", "alphabetical", "none"];
+const VALID_PAGENAV_DISPLAY = ["bottom", "top", "both"];
 
 const STYLE_LOAD_EVENT_NAME = "ggstyleload";
 const styleLoadEvent = new Event(STYLE_LOAD_EVENT_NAME);
@@ -908,7 +911,8 @@ class GalleryGrid extends HTMLElement {
         "small-maxrowheight", 
         "small-lbdisabled",
         "filters", 
-        "sort"
+        "sort",
+        "pagenav-display"
     ];
 
     static ids = [];
@@ -925,10 +929,8 @@ class GalleryGrid extends HTMLElement {
         this.page = 1;
         this.pageCount;
         this.maxPerPage;
-        this.pageNav;
-        this.pageNavNum;
-        this.pagePrevButton;
-        this.pageNextButton;
+        this.pageNavs = [];
+        this.pageNavDisplay;
 
         this.filters;
         this.includeFilters = [];
@@ -1022,6 +1024,9 @@ class GalleryGrid extends HTMLElement {
         if (this.getAttribute("ascending") === null && this.sort == "alphabetical") {
             this.ascending = true;
         } else this.ascending = this.validateBoolean("ascending");
+
+        // Page nav attributes
+        this.pageNavDisplay = this.validateSelection("pagenav-display", VALID_PAGENAV_DISPLAY, Defaults.PAGENAV_DISPLAY)
 
         // Other attributes
         var captions = this.validateSelection("captions", VALID_CAPTIONS, Defaults.CAPTIONS);
@@ -1148,30 +1153,53 @@ class GalleryGrid extends HTMLElement {
         // Create page nav (if applicable)
         if (this.maxPerPage) {
             this.pageCount = Math.max(Math.floor(this.sources.length / this.maxPerPage) + ((this.sources.length % this.maxPerPage) !== 0 ? 1 : 0), 1)
-            this.pageNav = document.createElement("div");
-            this.pageNav.className = "g-pageNav";
 
-            this.pagePrevButton = document.createElement("button");
-            this.pagePrevButton.className = "g-pageNavPrev g-pageNavButton";
-            this.pageNav.appendChild(this.pagePrevButton);
-            this.pagePrevButton.onclick = () => {
-                this.page = Math.max(1, this.page - 1);
-                this.applySourceChanges();
+            const createPageNav = () => {
+                const pageNav = document.createElement("div");
+                pageNav.className = "g-pageNav";
+
+                const pageNavPrevButton = document.createElement("button");
+                pageNavPrevButton.className = "g-pageNavPrev g-pageNavButton";
+                pageNav.appendChild(pageNavPrevButton);
+                pageNavPrevButton.onclick = () => {
+                    this.page = Math.max(1, this.page - 1);
+                    this.applySourceChanges();
+                }
+
+                const pageNavNum = document.createElement("span");
+                pageNavNum.className = 'g-pageNavNum';
+                pageNav.appendChild(pageNavNum);
+
+                const pageNavNextButton = document.createElement("button");
+                pageNavNextButton.className = "g-pageNavNext g-pageNavButton";
+                pageNav.appendChild(pageNavNextButton);
+                pageNavNextButton.onclick = () => {
+                    this.page = Math.min(this.pageCount, this.page + 1);
+                    this.applySourceChanges();
+                }
+
+                return {
+                    nav: pageNav,
+                    navPrevButton: pageNavPrevButton,
+                    navNum: pageNavNum,
+                    navNextButton: pageNavNextButton,
+                };
             }
+            
+            const pageNav = createPageNav();
+            this.appendChild(pageNav.nav);
+            this.pageNavs = [pageNav];
 
-            this.pageNavNum = document.createElement("span");
-            this.pageNavNum.className = 'g-pageNavNum';
-            this.pageNav.appendChild(this.pageNavNum);
+            if (this.pageNavDisplay === "bottom") pageNav.nav.style.order = "300";
+            if (this.pageNavDisplay === "top") pageNav.nav.style.order = "150";
+            if (this.pageNavDisplay === "both") {
+                pageNav.nav.style.order = "150";
 
-            this.pageNextButton = document.createElement("button");
-            this.pageNextButton.className = "g-pageNavNext g-pageNavButton";
-            this.pageNav.appendChild(this.pageNextButton);
-            this.pageNextButton.onclick = () => {
-                this.page = Math.min(this.pageCount, this.page + 1);
-                this.applySourceChanges();
+                const otherPageNav = createPageNav();
+                otherPageNav.nav.style.order = "300";
+                this.appendChild(otherPageNav.nav);
+                this.pageNavs.push(otherPageNav);
             }
-
-            this.appendChild(this.pageNav);
         }
 
         this.gridInitialized = true;
@@ -1232,9 +1260,13 @@ class GalleryGrid extends HTMLElement {
         if (this.maxPerPage) {
             this.pageCount = Math.max(Math.floor(changedSources.length / this.maxPerPage) + ((changedSources.length % this.maxPerPage) !== 0 ? 1 : 0), 1)
             this.page = Math.min(this.page, this.pageCount);
-            this.pageNavNum.textContent = `${this.page}/${this.pageCount}`;
-            this.pagePrevButton.disabled = this.page === 1;
-            this.pageNextButton.disabled = this.page === this.pageCount;
+
+            this.pageNavs.forEach((pageNav) => {
+                pageNav.navNum.textContent = `${this.page}/${this.pageCount}`;
+                pageNav.navPrevButton.disabled = this.page === 1;
+                pageNav.navNextButton.disabled = this.page === this.pageCount;
+            })
+
             this.gallery.updateSources(changedSources.slice(((this.page - 1) * this.maxPerPage), (this.page * this.maxPerPage)));
         } else {
             this.gallery.updateSources(changedSources);
