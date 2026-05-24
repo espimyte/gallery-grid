@@ -444,6 +444,8 @@ gallery-grid img:not(.g-gridCellImage) {
 }
 .g-gridCellButton {
     order: 2;
+    top: 0%;
+    left: 0%;
     position: absolute;
     padding: 0;
     margin: 0;
@@ -525,13 +527,13 @@ gallery-grid img:not(.g-gridCellImage) {
     position: absolute;
     top: 0%;
     left: 0%;
-    z-index: -1;
+    z-index: 0;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
-    border: 1px solid gray;
+    color: var(--terminal-green);
     box-sizing: border-box;
 
     width: 100%;
