@@ -7,7 +7,7 @@
 */
 
 /* User variables */
-var stylePath = "/style/gallery-grid.css";
+var stylePath = "/gallery-grid.css";
 var smallScreenWidth = 600; // The width the widget considers to be a small screen (mobile)
 var disableShortcuts = false; // Whether or not keyboard shortcuts are enabled
 
