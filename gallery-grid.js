@@ -372,8 +372,7 @@ class Gallery {
         var self = this;
 
         // Sources
-        this.sources = sources;
-        this.sortSources();
+        this.sources = Gallery.sortSources(sources);
 
         // Indexing
         this.curr = -1;
@@ -531,7 +530,9 @@ class Gallery {
                 self.nextButton.style.display = "block";
             }
         })
-        addEventListener(STYLE_LOAD_EVENT_NAME, () => self.refreshGrid());
+        addEventListener(STYLE_LOAD_EVENT_NAME, () => {
+            self.refreshGrid()
+        });
 
         // Swipe controls for mobile
         let init = {x: 0, y: 0};
@@ -734,7 +735,7 @@ class Gallery {
     generateJustifiedGrid(maxRowHeight, {smallFillWidth}) {
         var self = this;
         var gridWidth = self.gridEl.clientWidth;
-        
+
         if (Lightbox.isSmallScreen()) {
             maxRowHeight = self.smallMaxRowHeight ?? smallScreenWidth;
         }
@@ -875,26 +876,41 @@ class Gallery {
         return {outerWidth, outerHeight}
     }
 
+    /* Organizes sources. */
+    static sortSources(sources) {
+        sources.forEach((source, i) => {
+            if (source.order === undefined) source.order = i;
+        })
+
+        sources = sources.sort((a, b) => {
+            return (a.order > b.order) || -(a.order < b.order);
+        });
+
+        return sources;
+    }
+
     /** Returns the size of the source array. */
     getSourceSize() {
         return this.sources.length;
     }
 
-    /* Organizes sources. */
-    sortSources() {
-        this.sources.forEach((source, i) => {
-            if (!source.order) source.order = i;
-        })
-
-        this.sources = this.sources.sort((a, b) => {
-            return (a.order > b.order) || -(a.order < b.order);
-        });
-    }
-
     /** Updates the lightbox sources and refreshes. */
-    updateSources(sources = this.sources) {
-        this.sources = sources;
-        this.sortSources();
+    updateSources(sources = this.sources, force = false) {
+        let sortedSources = Gallery.sortSources(sources);
+
+        // Check if sources are the same
+        if (sortedSources.length === this.sources.length && !force) {
+            let sameSources = true;
+            for (let i = 0; i < sortedSources.length; i++) {
+                if (sortedSources[i] !== this.sources[i]) {
+                    sameSources = false;
+                }
+            }
+            if (sameSources) return;
+        }
+
+        this.sources = Gallery.sortSources(sources);
+
         Gallery.onSourcesChanged(this, sources);
     }
 }
@@ -1257,6 +1273,14 @@ class GalleryGrid extends HTMLElement {
             }
             changedSources.forEach((source, i) => {
                 source.order = i;
+            });
+        } else {
+            changedSources.forEach((source, i) => {
+                if (source.order === undefined) source.order = i;
+            })
+
+            changedSources = changedSources.sort((a, b) => {
+                return (a.order > b.order) || -(a.order < b.order);
             });
         }
 
