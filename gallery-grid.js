@@ -663,6 +663,8 @@ class Gallery {
      */
     generateFixedGrid(width, height, {smallFillWidth}) {
         var self = this;
+
+        this.gridEl.style.minHeight = `${this.gridEl.offsetHeight}px`;
         this.gridEl.innerHTML = '';
         this.gridEl.classList.add("g-grid");
         this.gridEl.classList.add("g-fixedGrid");
@@ -696,6 +698,8 @@ class Gallery {
             this.gridEl.appendChild(cell);
             if (!cellRect) cellRect = cell.getBoundingClientRect();
         }
+
+        this.gridEl.style.minHeight = "";
     }
 
     /** 
