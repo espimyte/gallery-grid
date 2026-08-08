@@ -1226,7 +1226,13 @@ class GalleryGrid extends HTMLElement {
         this.applySourceChanges();
     }
 
-    /** Refreshes grid and updates sources. */
+    /** Refreshes gallery grid. */
+    refreshGalleryGrid() {
+        if (!this.gridInitialized) return;
+        this.gallery.refreshGrid();
+    }
+
+    /** Refreshes grid and updates sources. Used for applying filters, sorts, and pagination. */
     applySourceChanges() {
         if (!this.gridInitialized) return;
         let changedSources = [...this.sources];
@@ -1338,6 +1344,7 @@ class GalleryGrid extends HTMLElement {
                     promise.then(() => {
                         loadingText.remove();
                         this.gallery.gridEl.style.opacity = "1";
+                        this.refreshGalleryGrid();
                         this.applySourceChanges();
                     })
                 })
@@ -1372,7 +1379,9 @@ class GalleryGrid extends HTMLElement {
                 const cellImage = new Image();
                 cellImage.src = imgEl.getAttribute("thumb") ?? imgEl.getAttribute("src");
                 const loadPromise = new Promise((resolve) => {
-                    cellImage.onload = () => resolve(true);
+                    cellImage.onload = () => {
+                        resolve(true);
+                    }
                     cellImage.onerror = () => {
                         if (imgEl.getAttribute("thumb")) {
                             console.error("Thumbnail url is invalid.")
@@ -1383,7 +1392,10 @@ class GalleryGrid extends HTMLElement {
                 loadPromise.then((success) => {
                     if (success) {
                         this.sources.push(GallerySource.fromElement(imgEl, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: cellOrder}));
-                        if (doRefresh) this.applySourceChanges();
+                        if (doRefresh) {
+                            this.refreshGalleryGrid();
+                            this.applySourceChanges();
+                        }
                     }
                 });
                 return loadPromise;
