@@ -27,7 +27,6 @@ const Defaults = {
 
     FILTERS: "none", // Filter type for the grid - Accepted values: tags, none
     SORT: "none", // Sort type for the gallery - Accepted values: default, none
-    LOADING: undefined, // Loading style for grid cell images, browser default if undefined - See here for accepted values: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
 }
 
 /*
