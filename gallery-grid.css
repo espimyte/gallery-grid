@@ -200,9 +200,17 @@ body {
     height: fit-content;
     margin: 0 auto;
     display: flex;
+
+    box-sizing: border-box;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 52, 73, 0.767) 0%,
+        rgba(1, 32, 30, 0.7) 100%
+    );
+    border: 1px solid rgb(48, 130, 143);
+    box-shadow: inset 0px 0px 5px rgba(65, 74, 75, 0.8);
 }
 #lb_image {
-    --border-width: 1px;
     --padding: 5px;
 
     position: relative;
@@ -211,20 +219,12 @@ body {
     object-fit: contain;
     image-rendering: auto;
 
-    max-width: calc(100% - (var(--border-width) * 2 + var(--padding) * 2));
-    max-height: calc(100% - (var(--border-width) * 2 + var(--padding) * 2));
+    max-width: calc(100% - (var(--padding) * 2));
+    max-height: calc(100% - (var(--padding) * 2));
     margin: auto;
     padding: var(--padding);
 
     box-sizing: content-box;
-    border: var(--border-width) solid rgb(48, 130, 143);
-
-    background: linear-gradient(
-        180deg,
-        rgba(0, 52, 73, 0.767) 0%,
-        rgba(1, 32, 30, 0.7) 100%
-    );
-    box-shadow: inset 0px 0px 5px rgba(65, 74, 75, 0.8);
 }
 #lb_image.lb-noframe {
     border-color: transparent;
@@ -414,13 +414,10 @@ body {
     justify-content: center;
     align-items: center;
 
-    color: gray;
+    color: rgb(121, 215, 228);
     background: rgba(0, 0, 0, 0.5);
     width: 100%;
     height: 100%;
-
-    border: 1px solid #2cac88;
-    border-radius: 10px;
 
     box-sizing: border-box;
 }
@@ -473,12 +470,13 @@ gallery-grid img:not(.g-gridCellImage) {
     margin: 8px;
     transition: all 0.5s !important;
     display: flex;
+    border: 1px solid rgb(0, 255, 136);
+    border-radius: 20px;
 }
 .g-gridCellImage {
     order: 1;
     border-radius: 20px;
-    border: 1px solid rgb(0, 255, 136);
-    box-sizing: border-box;
+    box-sizing: content-box;
 }
 .g-gridCellButton {
     order: 2;
