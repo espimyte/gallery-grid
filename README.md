@@ -1,10 +1,12 @@
 # Espy's Gallery Grid
-[Web Page](https://espy.world/gallery-grid)
 
-This is a widget designed for the indie web to easily display a gallery! 
-It is designed to be both simple to use and fully customizable, with or without javascript knowledge! 
+[Web Page](https://espy.world/gallery-grid) | [Documentation](https://espy.world/gallery-grid/documentation)
+
+This is a widget designed for the indie web to easily display a gallery!
+It is designed to be both simple to use and fully customizable, with or without javascript knowledge!
 
 ## Features
+
 - Fixed grids and justified grids!
 - Flexible, suitable for both a full gallery or a simple set of images
 - Titles and descriptions
@@ -29,7 +31,7 @@ Once downloaded, extract the `.zip` file.
 
 It should contain two files named `gallery-grid.js` and `gallery-grid.css`. Put them anywhere on your site.
 
-At the top of `gallery-grid.js`, there will be a variable called `stylePath`. Set that to the path of where `gallery-grid.css` is on your site. 
+At the top of `gallery-grid.js`, there will be a variable called `stylePath`. Set that to the path of where `gallery-grid.css` is on your site.
 
 ## How to Use
 
@@ -44,11 +46,12 @@ Note: Make sure to replace the source with the path to where you host the file o
 2. Add `<gallery-grid></gallery-grid>` where you want the grid to be.
 
 3. Fill it with images!
+
 ```html
 <gallery-grid>
-  <img src="/image-1.png" />
-  <img src="/image-2.jpg" />
-  <img src="/image-3.gif" />
+	<img src="/image-1.png" />
+	<img src="/image-2.jpg" />
+	<img src="/image-3.gif" />
 </gallery-grid>
 ```
 
@@ -57,6 +60,7 @@ If all you need is a simple grid, you can stop right here!
 For more details instructions on how to use more features of the widget, see the [web page](https://espy.world/gallery-grid).
 
 ## Terms of Use
+
 Do NOT remove the header comments in the JavaScript file!
 
 You are still free to edit these files as much as you like. As long as the credit inside of the header is intact, there's no problem.
