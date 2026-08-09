@@ -106,7 +106,7 @@ class Lightbox {
     }
 
     /** Sets lightbox to current data. */
-    static set({title, desc, tags, img, render, noframe, imgWidth, imgHeight, imgScale = 1, hidenav = false}) {
+    static set({title, desc, alt, tags, img, render, noframe, imgWidth, imgHeight, imgScale = 1, hidenav = false}) {
         if (this.disabled) return;
         if (this.isSmallScreen() && !this.smallScreenEnabled) return;
 
@@ -132,8 +132,15 @@ class Lightbox {
 
 
         this.imgEl.src = ""; // Unload previous image
-        this.imgEl.style.opacity = 0;
 
+        if (alt) {
+            this.imgEl.style.opacity = 1;
+            this.imgEl.alt = alt;
+        } else {
+            this.imgEl.style.opacity = 0;
+            this.imgEl.removeAttribute("alt");
+        }
+        
         this.imgEl.src = img;
         this.imgEl.style.imageRendering = render ? render : undefined;
 
@@ -232,7 +239,7 @@ class Lightbox {
 
 /* Defines data for single image in the gallery. */
 class GallerySource {
-    constructor({id, img, thumb, imgWidth, imgHeight, title, desc, tags, render, thumbRender, scale, noframe, order, element}) {
+    constructor({id, img, alt, thumb, imgWidth, imgHeight, title, desc, tags, render, thumbRender, scale, noframe, order, element}) {
         this.id = id;
         this.img = img;
         this.thumb = thumb;
@@ -242,6 +249,7 @@ class GallerySource {
 
         this.title = title;
         this.desc = desc;
+        this.alt = alt;
         this.tags = tags;
         this.scale = scale ?? 1;
 
@@ -265,7 +273,7 @@ class GallerySource {
         let noframe = element.getAttribute("noframe");
         noframe = noframe === null ? false : noframe !== "false";
 
-        return new GallerySource({element, id: element.id, img: element.getAttribute("src"), thumb: element.getAttribute("thumb"), imgWidth: width, imgHeight: height, title: element.getAttribute("title"), desc: element.getAttribute("desc"), tags: element.getAttribute("tags")?.split(","), scale, noframe, order, render: element.getAttribute("render"), thumbRender: element.getAttribute("thumb-render")})
+        return new GallerySource({element, id: element.id, img: element.getAttribute("src"), thumb: element.getAttribute("thumb"), imgWidth: width, imgHeight: height, title: element.getAttribute("title"), desc: element.getAttribute("desc"), tags: element.getAttribute("tags")?.split(","), scale, noframe, order, render: element.getAttribute("render"), thumbRender: element.getAttribute("thumb-render"), alt: element.alt})
     }
 }
 
