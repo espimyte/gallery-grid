@@ -1236,16 +1236,17 @@ class GalleryGrid extends HTMLElement {
         }
 
         this.gridInitialized = true;
-        this.applySourceChanges();
+        this.refreshGalleryGrid();
     }
 
     /** Refreshes gallery grid. */
     refreshGalleryGrid() {
         if (!this.gridInitialized) return;
         this.gallery.refreshGrid();
+        this.applySourceChanges();
     }
 
-    /** Refreshes grid and updates sources. Used for applying filters, sorts, and pagination. */
+    /** Updates sources. Used for applying filters, sorts, and pagination. */
     applySourceChanges() {
         if (!this.gridInitialized) return;
         let changedSources = [...this.sources];
@@ -1333,7 +1334,7 @@ class GalleryGrid extends HTMLElement {
         });
 
         if (this.gridType === "fixed") {
-            if (this.gridInitialized) this.applySourceChanges();
+            if (this.gridInitialized) this.refreshGalleryGrid();
             else this.initializeGrid();
         } else if (this.gridType === "justified") {
             if (!this.gridInitialized) this.initializeGrid();
@@ -1358,7 +1359,6 @@ class GalleryGrid extends HTMLElement {
                         loadingText.remove();
                         this.gallery.gridEl.style.opacity = "1";
                         this.refreshGalleryGrid();
-                        this.applySourceChanges();
                     })
                 })
             }
@@ -1383,11 +1383,15 @@ class GalleryGrid extends HTMLElement {
 
         if (this.gridType === "fixed") {
             this.sources.push(GallerySource.fromElement(imgEl, {order: cellOrder}));
-            if (doRefresh) this.applySourceChanges();
+            if (doRefresh) {
+                this.refreshGalleryGrid();
+            }
         } else {
             if (imgEl.width && imgEl.height) {
                 this.sources.push(GallerySource.fromElement(imgEl, {width: imgEl.width, height: imgEl.height, order: cellOrder}));
-                if (doRefresh) this.applySourceChanges();
+                if (doRefresh) {
+                    this.refreshGalleryGrid();
+                }
             } else {
                 const cellImage = new Image();
                 cellImage.src = imgEl.getAttribute("thumb") ?? imgEl.getAttribute("src");
@@ -1407,7 +1411,6 @@ class GalleryGrid extends HTMLElement {
                         this.sources.push(GallerySource.fromElement(imgEl, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: cellOrder}));
                         if (doRefresh) {
                             this.refreshGalleryGrid();
-                            this.applySourceChanges();
                         }
                     }
                 });
@@ -1423,7 +1426,7 @@ class GalleryGrid extends HTMLElement {
             return;
         }
         this.sources = [];
-        this.applySourceChanges();
+        this.refreshGalleryGrid();
     }
 }
 customElements.define('gallery-grid', GalleryGrid);
