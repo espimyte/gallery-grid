@@ -27,6 +27,7 @@ const Defaults = {
 
     FILTERS: "none", // Filter type for the grid - Accepted values: tags, none
     SORT: "none", // Sort type for the gallery - Accepted values: default, none
+    LOADING: undefined, // Loading style for grid cell images, browser default if undefined - See here for accepted values: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
 }
 
 /*
@@ -644,15 +645,16 @@ class Gallery {
      * @param width target fixed width for cell
      * @param height target fixed height for cell
      * @param smallFillWidth whether or not cells fill the width of a small screen
+     * @param loading what loading style to use
      */
-    initializeFixedGrid(parent, {width, height, smallFillWidth}) {
+    initializeFixedGrid(parent, {width, height, smallFillWidth, loading}) {
         var self = this;
         this.gridEl = document.createElement("div");
         parent.appendChild(this.gridEl);
 
-        this.generateFixedGrid(width, height, {smallFillWidth});
+        this.generateFixedGrid(width, height, {smallFillWidth, loading});
         this.refreshGrid = () => { 
-            self.generateFixedGrid(width, height, {smallFillWidth}); 
+            self.generateFixedGrid(width, height, {smallFillWidth, loading}); 
         }
     }
 
@@ -661,8 +663,9 @@ class Gallery {
      * @param width target fixed width for cell
      * @param height target fixed height for cell
      * @param smallFillWidth whether or not cells fill the width of a small screen
+     * @param loading what loading style to use
      */
-    generateFixedGrid(width, height, {smallFillWidth}) {
+    generateFixedGrid(width, height, {smallFillWidth, loading}) {
         var self = this;
 
         this.gridEl.style.minHeight = `${this.gridEl.offsetHeight}px`;
@@ -688,6 +691,9 @@ class Gallery {
                 if (cellElement && key !== "btn" && key !== "img") {
                     cell.appendChild(cellElement);
                 }
+                if (cellElement && key == "img" && loading) {
+                    cellElement.loading = loading
+                }
             }
 
             cell.append(cellElements["btn"], cellElements["img"]);
@@ -709,21 +715,22 @@ class Gallery {
      * @param maxRowHeight max height for row
      * @param smallMaxRowHeight max height for row for small screens
      * @param smallFillWidth whether or not cells fill the width of a small screen
+     * @param loading what loading style to use
      */
-    initializeJustifiedGrid(parent, {maxRowHeight, smallMaxRowHeight, smallFillWidth}) {
+    initializeJustifiedGrid(parent, {maxRowHeight, smallMaxRowHeight, smallFillWidth, loading}) {
         var self = this;
         this.gridEl = document.createElement("div");
         parent.appendChild(this.gridEl);
         this.maxRowHeight = maxRowHeight;
         this.smallMaxRowHeight = smallMaxRowHeight;
 
-        self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth});
+        self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth, loading});
 
         addEventListener("resize", function () {
             self.refreshGrid();
         });
         self.refreshGrid = () => {
-            self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth});
+            self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth, loading});
         }
     }
 
@@ -731,8 +738,9 @@ class Gallery {
      * Generates with justified grid. 
      * @param maxRowHeight max height for row
      * @param smallFillWidth whether or not cells fill the width of a small screen
+     * @param loading what loading style to use
      */
-    generateJustifiedGrid(maxRowHeight, {smallFillWidth}) {
+    generateJustifiedGrid(maxRowHeight, {smallFillWidth, loading}) {
         var self = this;
         var gridWidth = self.gridEl.clientWidth;
 
@@ -760,6 +768,9 @@ class Gallery {
                     const imgOuterSizes = Gallery.getOuterSize(cellElement);
                     extraWidth += imgOuterSizes.outerWidth;
                     extraHeight += imgOuterSizes.outerHeight;
+                    if (loading) {
+                        cellElement.loading = loading;
+                    }
                 }
 
                 if (cellElement) cell.appendChild(cellElement);
@@ -1051,6 +1062,7 @@ class GalleryGrid extends HTMLElement {
         // Other attributes
         var captions = this.validateSelection("captions", VALID_CAPTIONS, Defaults.CAPTIONS);
         var hiddenElements = this.getAttribute("hide")?.split(",");
+        var loading = this.getAttribute("loading");
 
         // Create sorts and filters options (if applicable)
         const sifterDiv = document.createElement("div");
@@ -1164,10 +1176,11 @@ class GalleryGrid extends HTMLElement {
             this.gallery.initializeFixedGrid(this, {
                 width: width, 
                 height: height,
-                smallFillWidth
+                smallFillWidth,
+                loading
             })
         } else if (this.gridType == "justified") {
-            this.gallery.initializeJustifiedGrid(this, {smallMaxRowHeight, maxRowHeight, smallFillWidth})
+            this.gallery.initializeJustifiedGrid(this, {smallMaxRowHeight, maxRowHeight, smallFillWidth, loading})
         }
 
         // Create page nav (if applicable)
