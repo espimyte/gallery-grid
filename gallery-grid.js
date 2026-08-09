@@ -27,6 +27,7 @@ const Defaults = {
 
     FILTERS: "none", // Filter type for the grid - Accepted values: tags, none
     SORT: "none", // Sort type for the gallery - Accepted values: default, none
+    LOADING: undefined, // Loading style for grid cell images, browser default if undefined - See here for accepted values: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
 }
 
 /*
@@ -105,7 +106,7 @@ class Lightbox {
     }
 
     /** Sets lightbox to current data. */
-    static set({title, desc, tags, img, render, noframe, imgWidth, imgHeight, imgScale = 1, hidenav = false}) {
+    static set({title, desc, alt, tags, img, render, noframe, imgWidth, imgHeight, imgScale = 1, hidenav = false}) {
         if (this.disabled) return;
         if (this.isSmallScreen() && !this.smallScreenEnabled) return;
 
@@ -131,8 +132,15 @@ class Lightbox {
 
 
         this.imgEl.src = ""; // Unload previous image
-        this.imgEl.style.opacity = 0;
 
+        if (alt) {
+            this.imgEl.style.opacity = 1;
+            this.imgEl.alt = alt;
+        } else {
+            this.imgEl.style.opacity = 0;
+            this.imgEl.removeAttribute("alt");
+        }
+        
         this.imgEl.src = img;
         this.imgEl.style.imageRendering = render ? render : undefined;
 
@@ -231,7 +239,7 @@ class Lightbox {
 
 /* Defines data for single image in the gallery. */
 class GallerySource {
-    constructor({id, img, thumb, imgWidth, imgHeight, title, desc, tags, render, thumbRender, scale, noframe, order, element}) {
+    constructor({id, img, alt, thumb, imgWidth, imgHeight, title, desc, tags, render, thumbRender, scale, noframe, order, element}) {
         this.id = id;
         this.img = img;
         this.thumb = thumb;
@@ -241,6 +249,7 @@ class GallerySource {
 
         this.title = title;
         this.desc = desc;
+        this.alt = alt;
         this.tags = tags;
         this.scale = scale ?? 1;
 
@@ -264,7 +273,7 @@ class GallerySource {
         let noframe = element.getAttribute("noframe");
         noframe = noframe === null ? false : noframe !== "false";
 
-        return new GallerySource({element, id: element.id, img: element.getAttribute("src"), thumb: element.getAttribute("thumb"), imgWidth: width, imgHeight: height, title: element.getAttribute("title"), desc: element.getAttribute("desc"), tags: element.getAttribute("tags")?.split(","), scale, noframe, order, render: element.getAttribute("render"), thumbRender: element.getAttribute("thumb-render")})
+        return new GallerySource({element, id: element.id, img: element.getAttribute("src"), thumb: element.getAttribute("thumb"), imgWidth: width, imgHeight: height, title: element.getAttribute("title"), desc: element.getAttribute("desc"), tags: element.getAttribute("tags")?.split(","), scale, noframe, order, render: element.getAttribute("render"), thumbRender: element.getAttribute("thumb-render"), alt: element.alt})
     }
 }
 
@@ -644,15 +653,16 @@ class Gallery {
      * @param width target fixed width for cell
      * @param height target fixed height for cell
      * @param smallFillWidth whether or not cells fill the width of a small screen
+     * @param loading what loading style to use
      */
-    initializeFixedGrid(parent, {width, height, smallFillWidth}) {
+    initializeFixedGrid(parent, {width, height, smallFillWidth, loading}) {
         var self = this;
         this.gridEl = document.createElement("div");
         parent.appendChild(this.gridEl);
 
-        this.generateFixedGrid(width, height, {smallFillWidth});
+        this.generateFixedGrid(width, height, {smallFillWidth, loading});
         this.refreshGrid = () => { 
-            self.generateFixedGrid(width, height, {smallFillWidth}); 
+            self.generateFixedGrid(width, height, {smallFillWidth, loading}); 
         }
     }
 
@@ -661,8 +671,9 @@ class Gallery {
      * @param width target fixed width for cell
      * @param height target fixed height for cell
      * @param smallFillWidth whether or not cells fill the width of a small screen
+     * @param loading what loading style to use
      */
-    generateFixedGrid(width, height, {smallFillWidth}) {
+    generateFixedGrid(width, height, {smallFillWidth, loading}) {
         var self = this;
 
         this.gridEl.style.minHeight = `${this.gridEl.offsetHeight}px`;
@@ -688,6 +699,9 @@ class Gallery {
                 if (cellElement && key !== "btn" && key !== "img") {
                     cell.appendChild(cellElement);
                 }
+                if (cellElement && key == "img" && loading) {
+                    cellElement.loading = loading
+                }
             }
 
             cell.append(cellElements["btn"], cellElements["img"]);
@@ -709,21 +723,22 @@ class Gallery {
      * @param maxRowHeight max height for row
      * @param smallMaxRowHeight max height for row for small screens
      * @param smallFillWidth whether or not cells fill the width of a small screen
+     * @param loading what loading style to use
      */
-    initializeJustifiedGrid(parent, {maxRowHeight, smallMaxRowHeight, smallFillWidth}) {
+    initializeJustifiedGrid(parent, {maxRowHeight, smallMaxRowHeight, smallFillWidth, loading}) {
         var self = this;
         this.gridEl = document.createElement("div");
         parent.appendChild(this.gridEl);
         this.maxRowHeight = maxRowHeight;
         this.smallMaxRowHeight = smallMaxRowHeight;
 
-        self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth});
+        self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth, loading});
 
         addEventListener("resize", function () {
             self.refreshGrid();
         });
         self.refreshGrid = () => {
-            self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth});
+            self.generateJustifiedGrid(this.maxRowHeight, {smallFillWidth, loading});
         }
     }
 
@@ -731,8 +746,9 @@ class Gallery {
      * Generates with justified grid. 
      * @param maxRowHeight max height for row
      * @param smallFillWidth whether or not cells fill the width of a small screen
+     * @param loading what loading style to use
      */
-    generateJustifiedGrid(maxRowHeight, {smallFillWidth}) {
+    generateJustifiedGrid(maxRowHeight, {smallFillWidth, loading}) {
         var self = this;
         var gridWidth = self.gridEl.clientWidth;
 
@@ -760,6 +776,9 @@ class Gallery {
                     const imgOuterSizes = Gallery.getOuterSize(cellElement);
                     extraWidth += imgOuterSizes.outerWidth;
                     extraHeight += imgOuterSizes.outerHeight;
+                    if (loading) {
+                        cellElement.loading = loading;
+                    }
                 }
 
                 if (cellElement) cell.appendChild(cellElement);
@@ -1051,6 +1070,7 @@ class GalleryGrid extends HTMLElement {
         // Other attributes
         var captions = this.validateSelection("captions", VALID_CAPTIONS, Defaults.CAPTIONS);
         var hiddenElements = this.getAttribute("hide")?.split(",");
+        var loading = this.getAttribute("loading");
 
         // Create sorts and filters options (if applicable)
         const sifterDiv = document.createElement("div");
@@ -1164,10 +1184,11 @@ class GalleryGrid extends HTMLElement {
             this.gallery.initializeFixedGrid(this, {
                 width: width, 
                 height: height,
-                smallFillWidth
+                smallFillWidth,
+                loading
             })
         } else if (this.gridType == "justified") {
-            this.gallery.initializeJustifiedGrid(this, {smallMaxRowHeight, maxRowHeight, smallFillWidth})
+            this.gallery.initializeJustifiedGrid(this, {smallMaxRowHeight, maxRowHeight, smallFillWidth, loading})
         }
 
         // Create page nav (if applicable)
@@ -1223,10 +1244,17 @@ class GalleryGrid extends HTMLElement {
         }
 
         this.gridInitialized = true;
+        this.refreshGalleryGrid();
+    }
+
+    /** Refreshes gallery grid. */
+    refreshGalleryGrid() {
+        if (!this.gridInitialized) return;
+        this.gallery.refreshGrid();
         this.applySourceChanges();
     }
 
-    /** Refreshes grid and updates sources. */
+    /** Updates sources. Used for applying filters, sorts, and pagination. */
     applySourceChanges() {
         if (!this.gridInitialized) return;
         let changedSources = [...this.sources];
@@ -1314,7 +1342,7 @@ class GalleryGrid extends HTMLElement {
         });
 
         if (this.gridType === "fixed") {
-            if (this.gridInitialized) this.applySourceChanges();
+            if (this.gridInitialized) this.refreshGalleryGrid();
             else this.initializeGrid();
         } else if (this.gridType === "justified") {
             if (!this.gridInitialized) this.initializeGrid();
@@ -1338,7 +1366,7 @@ class GalleryGrid extends HTMLElement {
                     promise.then(() => {
                         loadingText.remove();
                         this.gallery.gridEl.style.opacity = "1";
-                        this.applySourceChanges();
+                        this.refreshGalleryGrid();
                     })
                 })
             }
@@ -1363,16 +1391,22 @@ class GalleryGrid extends HTMLElement {
 
         if (this.gridType === "fixed") {
             this.sources.push(GallerySource.fromElement(imgEl, {order: cellOrder}));
-            if (doRefresh) this.applySourceChanges();
+            if (doRefresh) {
+                this.refreshGalleryGrid();
+            }
         } else {
             if (imgEl.width && imgEl.height) {
                 this.sources.push(GallerySource.fromElement(imgEl, {width: imgEl.width, height: imgEl.height, order: cellOrder}));
-                if (doRefresh) this.applySourceChanges();
+                if (doRefresh) {
+                    this.refreshGalleryGrid();
+                }
             } else {
                 const cellImage = new Image();
                 cellImage.src = imgEl.getAttribute("thumb") ?? imgEl.getAttribute("src");
                 const loadPromise = new Promise((resolve) => {
-                    cellImage.onload = () => resolve(true);
+                    cellImage.onload = () => {
+                        resolve(true);
+                    }
                     cellImage.onerror = () => {
                         if (imgEl.getAttribute("thumb")) {
                             console.error("Thumbnail url is invalid.")
@@ -1383,7 +1417,9 @@ class GalleryGrid extends HTMLElement {
                 loadPromise.then((success) => {
                     if (success) {
                         this.sources.push(GallerySource.fromElement(imgEl, {width: cellImage.naturalWidth, height: cellImage.naturalHeight, order: cellOrder}));
-                        if (doRefresh) this.applySourceChanges();
+                        if (doRefresh) {
+                            this.refreshGalleryGrid();
+                        }
                     }
                 });
                 return loadPromise;
@@ -1398,7 +1434,7 @@ class GalleryGrid extends HTMLElement {
             return;
         }
         this.sources = [];
-        this.applySourceChanges();
+        this.refreshGalleryGrid();
     }
 }
 customElements.define('gallery-grid', GalleryGrid);
