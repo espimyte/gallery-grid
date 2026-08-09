@@ -486,7 +486,6 @@ gallery-grid img:not(.g-gridCellImage) {
     justify-content: center;
     align-items: center;
 
-    border: 1px solid gray;
     box-sizing: border-box;
 
     width: 100%;
