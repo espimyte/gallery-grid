@@ -223,7 +223,7 @@ body {
     margin: auto;
     box-sizing: content-box;
 }
-#lb_image.lb-noframe {
+#lb_imageWrapper.lb-noframe {
     border: none;
     filter: drop-shadow(2px 2px 0px white)
         drop-shadow(-2px -2px 0px rgb(186, 186, 255))
