@@ -215,7 +215,7 @@ body {
 #lb_image:before {
     color: var(--terminal-green);
 }
-#lb_imageWrapper.lb-noframe {
+#lb_imageWrapper.lb-noframe #lb_image{
     border-color: transparent;
     background: transparent;
     filter: drop-shadow(1px 1px 0px green) drop-shadow(-1px -1px 0px green) drop-shadow(1px -1px 0px green) drop-shadow(-1px 1px 0px green) 
