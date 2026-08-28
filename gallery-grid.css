@@ -222,7 +222,7 @@ body {
 
     aspect-ratio: unset !important;
 }
-#lb_image.lb-noframe {
+#lb_imageWrapper.lb-noframe, #lb_imageWrapper.lb-noframe #lb_image {
     border: 0px solid transparent;
     border-image: unset;
 }
