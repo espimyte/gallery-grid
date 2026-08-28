@@ -1,7 +1,7 @@
 /*
 *   (DO NOT REMOVE THIS HEADER)
 *
-*   Gallery Grid (v.1.4.0)
+*   Gallery Grid (v.1.4.1)
 *   Author: espimyte (https://espy.world)
 *   https://espy.world/gallery-grid
 */
@@ -522,7 +522,7 @@ class Gallery {
         var self = this;
 
         Lightbox.setOnLightboxOpenEvent(() => {
-            animateX(Lightbox.imgEl, 0, 0);
+            animateX(Lightbox.imgWrapperEl, 0, 0);
         })
         Lightbox.setOnLightboxCloseEvent(() => {
             self.focused = false;
@@ -566,7 +566,7 @@ class Gallery {
             delta.x = e.touches[0].pageX - init.x;
             delta.y = e.touches[0].pageY - init.y;
 
-            animateX(Lightbox.imgEl, delta.x, 0)
+            animateX(Lightbox.imgWrapperEl, delta.x, 0)
             if (delta.x + Math.abs(delta.y) > threshold && !self.isFirstLightbox()) {
                 self.prevButton.style.display = "block";
             } else {
@@ -584,32 +584,32 @@ class Gallery {
             
             if (delta.x + Math.abs(delta.y) > threshold) {
                 if (!self.isFirstLightbox()) {
-                    let moveOutAnim = animateX(Lightbox.imgEl, this.window.innerWidth, self.SWIPE_SPEED);
+                    let moveOutAnim = animateX(Lightbox.imgWrapperEl, this.window.innerWidth, self.SWIPE_SPEED);
                     moveOutAnim.onfinish = () => {
                         self.prevLightbox();
-                        animateX(Lightbox.imgEl, -this.window.innerWidth, 0);
-                        animateX(Lightbox.imgEl, 0, self.SWIPE_SPEED);
+                        animateX(Lightbox.imgWrapperEl, -this.window.innerWidth, 0);
+                        animateX(Lightbox.imgWrapperEl, 0, self.SWIPE_SPEED);
                     }
                 } else {
-                    animateX(Lightbox.imgEl, 20, self.SWIPE_BUMP_SPEED / 2).onfinish = () => {
-                        animateX(Lightbox.imgEl, 0, self.SWIPE_BUMP_SPEED / 2);
+                    animateX(Lightbox.imgWrapperEl, 20, self.SWIPE_BUMP_SPEED / 2).onfinish = () => {
+                        animateX(Lightbox.imgWrapperEl, 0, self.SWIPE_BUMP_SPEED / 2);
                     }
                 }
             } else if (delta.x + (-Math.abs(delta.y)) < (-threshold)) {
                 if (!self.isLastLightbox()) {
-                    let moveOutAnim = animateX(Lightbox.imgEl, -this.window.innerWidth, self.SWIPE_SPEED);
+                    let moveOutAnim = animateX(Lightbox.imgWrapperEl, -this.window.innerWidth, self.SWIPE_SPEED);
                     moveOutAnim.onfinish = () => {
                         self.nextLightbox();
-                        animateX(Lightbox.imgEl, this.window.innerWidth, 0);
-                        animateX(Lightbox.imgEl, 0, self.SWIPE_SPEED);
+                        animateX(Lightbox.imgWrapperEl, this.window.innerWidth, 0);
+                        animateX(Lightbox.imgWrapperEl, 0, self.SWIPE_SPEED);
                     }
                 } else {
-                    animateX(Lightbox.imgEl, -20, self.SWIPE_BUMP_SPEED / 2).onfinish = () => {
-                        animateX(Lightbox.imgEl, 0, self.SWIPE_BUMP_SPEED / 2);
+                    animateX(Lightbox.imgWrapperEl, -20, self.SWIPE_BUMP_SPEED / 2).onfinish = () => {
+                        animateX(Lightbox.imgWrapperEl, 0, self.SWIPE_BUMP_SPEED / 2);
                     }
                 }
             } else {
-                animateX(Lightbox.imgEl, 0, self.SWIPE_BUMP_SPEED / 2);
+                animateX(Lightbox.imgWrapperEl, 0, self.SWIPE_BUMP_SPEED / 2);
             }
             init = {x: 0, y: 0};
             delta = {x: 0, y: 0};
