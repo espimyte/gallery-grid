@@ -1,7 +1,7 @@
 /*
 *   (DO NOT REMOVE THIS HEADER)
 *
-*   Gallery Grid (v.1.4.0)
+*   Gallery Grid (v.1.4.1)
 *   Author: espimyte (https://espy.world)
 *   https://espy.world/gallery-grid
 */
