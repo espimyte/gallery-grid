@@ -220,7 +220,7 @@ body {
     image-rendering: auto;
 
     max-width: calc(100% - (var(--padding) * 2));
-    max-height: calc(100% - (var(--padding) * 2));
+    max-height: calc(100%);
     margin: auto;
     padding: var(--padding);
 
