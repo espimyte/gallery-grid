@@ -143,8 +143,8 @@ class Lightbox {
         this.imgEl.src = img;
         this.imgEl.style.imageRendering = render ? render : undefined;
 
-        if (noframe) this.imgEl.classList.add("lb-noframe");
-        else this.imgEl.classList.remove("lb-noframe");
+        if (noframe) this.imgWrapperEl.classList.add("lb-noframe");
+        else this.imgWrapperEl.classList.remove("lb-noframe");
 
         if (hidenav) this.lightboxEl.classList.add("lb-hidenav");
         else this.lightboxEl.classList.remove("lb-hidenav");

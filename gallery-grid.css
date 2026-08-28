@@ -205,7 +205,7 @@ body {
 
     box-sizing: content-box;
 }
-#lb_image.lb-noframe {
+#lb_imageWrapper.lb-noframe {
     border-color: transparent;
 }
 
