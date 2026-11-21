@@ -1282,10 +1282,10 @@ class GalleryGrid extends HTMLElement {
         if (this.sort && this.sort == "default") {
             if (this.sorting === "ascending") {
                 changedSources = changedSources.toReversed();
-                changedSources.forEach((source, i) => {
-                    source.order = i;
-                });
             }
+            changedSources.forEach((source, i) => {
+                source.order = i;
+            });
         } else if (this.sort && this.sort == "alphabetical") {
             if (this.sorting === "ascending") {
                 changedSources = changedSources.sort((a, b) => {
