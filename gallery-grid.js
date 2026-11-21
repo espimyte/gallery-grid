@@ -10,6 +10,7 @@
 var stylePath = "gallery-grid.css"; // The path to the gallery grid stylesheet
 var smallScreenWidth = 600; // The width the widget considers to be a small screen (mobile)
 var disableShortcuts = false; // Whether or not keyboard shortcuts are enabled
+var verboseLogging = true; // Whether or not to use verbose logging (for debugging)
 
 /* Default values */
 const Defaults = {
@@ -1437,6 +1438,11 @@ class GalleryGrid extends HTMLElement {
     }
 }
 customElements.define('gallery-grid', GalleryGrid);
+
+/* Log output if verbose logging is enabled. */
+function logv(text) {
+    if (verboseLogging) console.log(text)
+}
 
 function main() {
     // Apply CSS
